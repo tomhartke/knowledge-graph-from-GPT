@@ -1,0 +1,1311 @@
+front,back
+How do you use dual numbers for differentiation: ,"Dual numbers are just things that square to zero I think (think of an infinitesimal).
+So to get derivative, just plug in x + dual epsilon, then expand out result, and take linear term. "
+How is a double formatted in C? (same as a float in python) ,"64 bits of information. 
+1 bit sign, 11 bits exponent, 52 bit mantissa. 
+Extracting the number is: sign * mantissa * 2^(exponent)"
+Which differentiation method is inherently prone to rounding errors? ,"Numerical differentiation, as opposed to symbolic differentiation "
+When is a set of data considered linearly separable? ,When there is hyperplane that can correctly classify everything into two classes. 
+"Describe the relation between autoregressive models, flow models, and latent variable models in 1 sentence.","Autoregressive models are general prediction models
+Flow models can handle continuous data and disentangle the latent space
+Latent variable models compress the latent space to enhance inference. "
+"In CS294 (Berkeley) - Deep Unsupervised learning, what is the relation between VAE, VQ-VAE, and PixelVAE?","VAE is the basic architecture. 
+VQ-VAE is introducing a more realistic (categorical) latent space.
+PixelVAE uses an autoregressive model in the decoder to improve the local structure generation. "
+"In CS294 (Berkeley) - Deep Unsupervised learning, what is the relation between flow models and latent variable models? What are latent variable models trying to address?","Latent variable models, like VAEs, try to compress the latent space compared to flow models (which maintain dimensionality). 
+This is expected to be a more efficient representation for inference (rather than just sampling) "
+"In CS294 (Berkeley) - Deep Unsupervised learning, what is the relation between autoregressive models and flow models? What are flow models trying to address?","They can handle continuous spaces.
+They can find disentangled representations of latent variables (because the prior is assumed to be disentangled). "
+What were the topics of the first 3 major lectures in CS294 (Berkeley) - Deep Unsupervised learning?,"Autoregressive models (eg. Transformers)
+Flow models (eg. Glow)
+Latent variable models (eg. VAEs) "
+"Of the things I have learned about mechanistic interpretability, what two major categories can they be divided into? ","Interpretability of basic network structure and information flow
+Interpretability of transformers "
+List a few of the major results in mechanistic interpretability relating to transformers ,"Induction head formation from Anthropic. Also transformer structure interpretation from anthropic 
+Grokking process and formation/ablation of generalization circuit
+Factual association and editing in models (ROME) "
+List a few of the major results in mechanistic interpretability relating to the basic structure of networks ,"Circuits for vision models, hierarchy, and building blocks 
+Toy model of superposition from Anthropic "
+List a few of the major transformer types mentioned in the CS25 course from Stanford,"1. GPT-3 decoder
+	2. Decision transformer for RL
+	3. Mixture of experts/switch transformer
+	4. Perceiver (Projection)
+	5. Non-parametric transformers
+	6. Audio
+	7. GLOM"
+How are the properties of the covariance matrix similar to a hermitian matrix? ,"Covariance matrix is normal and hermitian, so it is diagonalizable, and its eigenvalues are real, and different eigenvalues have orthogonal eigenvectors. "
+Why is principle components analysis equivalent to finding the eigenvectors of the covariance matrix? ,"Once you find the eigenvectors of the covariance matrix, then view all of your data along the eigenvectors (ie project onto the eigenvectors and then calculate the covariance), then 
+the remaining variance will be in independent components. 
+Moreover, those components will have decreasing/increasing importance, and some can be dropped. "
+"What is the covariance of a vector of random variables?
+What about for a finite sample of data? ","It is the average of (x-\bar{x})(x - \bar{x})^T, with diagonal elements being the variances.
+If x has length p, then a finite sample of n values of x will have a covariance matrix X^T X where X is n by p (that is, you sum over the sample dimension). "
+Why was pixelVAE (a blend of pixelCNN and VQ-VAE) better than either individually? ,"VAE allows for explicit finding of latent variables, which can guide global structure on the decoder end. PixelCNN is bad at this (linear expansion of context with depth).
+PixelCNN is very good at fine detail and edges and things like that, so gets the resolution really good. "
+What is PixelVAE? ,"It blends VQ-VAE with pixelCNN.
+Specifically vector-quantized variational autoencoder, with a sequence of hierarchical pixelCNN autoregressive decoders. "
+What did the second VQ-VAE paper add to the original VQ-VAE paper to make it even better at high-resolution image generation? ,"Hierarchy.
+It compressed the image further, doing hierarchical encoding for increased resolution, then sampled and decoded in this hierarchical way as well. "
+What is one major difference between images generated by GANs compared to VQ-VAE (at least a general trend). ,"GANs learn to collapse to a specific type of image to fool the critic network. They lack representational diversity (think of man holding a fish always being the same). 
+VQ-VAE generates images that have high diversity, while being semantically the same (ie zoomed in images of an ostrich vs far out) "
+"What problem is Beta-VAE trying to solve, and how does it solve it? ","Vanilla VAE doesn't have a strong prior to learn disentangled latent variables. Ie tuning smiling could also tune the pose.
+Beta-VAE adds a stronger penalty for regularization in the cost function (the KL divergence term). This forces independent distributions of each latent variables. Why does this work? Seems a bit unclear but basically a strong KL term means it tries to restrict the amount of information recorded, so information being minimized means having the least amount of correlation in the underlying variables (unsure)? "
+What was I originally confused about regarding VQ-VAE architectures? How does it turn out they are actually able to overcome this problem? ,"I was worried a latent space with just 512 possible categorical quantizations can't possibly reproduce enough complexity like what we see in nature. 
+In reality this is not how it's done. There are something like 32x32 independent categorical varaibles (so 512^(32*32) possible outcomes in the latent space). So flexibility is sufficient."
+"Describe the additional structure of the hidden layer in VQ-VAE. 
+How is the latent variable determined from the output of a neural network, and how is it then fed back into the decoder network? ","Encoder produces vector representation. 
+Vector quantization finds closest cluster of examples (really there are K vectors that represent the latent space, and it finds the closest one). 
+Output uses that vector representation (not the original) for generation. "
+What is the main difference in the structure of the latent space for VQ-VAE compared to VAE? (vector quantized VAE vs normal VAE) ,"Latent space is a set of categorical variables in VQ-VAEs, rather than continuous spaces like a Gaussian for VAEs "
+Describe how the reparametrization trick is used to make a stable gradient calculation in a variational autoencoder. Specifically for the case of a Gaussian prior. ,"You parametrize mu and sigma with a network. You write the expectation value of some f(z) over q(z) as expectation over unit normal for variable epsilon of f(mu + sigma*epsilon).
+Now you can differentiate in sigma, then average over epsilon, etc. 
+This is stable beacuse the average over epsilon is tractable. "
+"What are the two tricks used to compute the gradient of the expectation value of some function, where you are taking a gradient with respect to the parameters of the distribution?
+When can they both be used or not? ","Likelihood gradient ratio: this can always be used, but is noisy because you do it for a single sample.
+Reparametrization trick: this can only be used for some easily-parametrized distributions, but in this case it's more stable since the randomness is now explicitly already averaged over to get the gradient. "
+What are the steps to setting up and training a variational autoencoder ,"Assume latent variables exist
+Write exact log likelihood to maximize, with summation over q(z). 
+To make this easier to work with, do importance sampling, then use Jensen's to take out the average over q(z).
+This gives you the usual formula for the lower bound which can be written as expectation_q(z) of log(p(z) p(x|z)) + entropy over q(z). 
+Parametrize your q_phi(z|x_i) and p_theta(x_i|z) and then optimize over all of these. To maximize it.
+Specifically, given some x_i samples, generate z_i samples, then calculate the VAE objective "
+What are the two effective components of the variational lower bound on an autoencoder loss function? ,"Reconstruction loss is Exp_q [log(p(x|z)]
+Regularization term (minus KL divergence of q(z) from p(z)) "
+"How is the variational lower bound on an autoencoder loss function derived from the importance weighted autoencoder?
+What is the single step which provides this lower bound? ",The step is taking the expectation value outside the log. This leads to a lower bound on the original function (the log likelihood). 
+What is importance sampling in the context of variational autoencoders? ,"You want to sample z values with a high probability of generating observed data. The ultimate goal is to calculate p_theta(x) = \sum_z p_theta(x|z)p(z).
+You choose a sampling distribution q(z) which is likely to give those values. Then you can weigh the expectation value over z by Exp_q [p_theta(x|z)p(z)/q(z)] and you get meaningful samples. "
+What is the computational difficulty of just sampling values in the latent space in order to learn to optimize your variational autoencoder? ,"If sample z values don't reproduce the datapoints (they generally won't in a super high dimensional space), then you never have any signal to begin optimization. "
+What is the underlying assumption made in order to use a variational autoencoder? ,Assumes latent variables exist. 
+"What is the theoretical formula of the exact target function for a variational autoencoder?
+What is the difficult part of using this? ","We want to maximize log(p_theta(x)) with p_theta(x) = \sum_z p_theta(x|z)p(z).
+The difficulty is that the sum over z is inside the log, which makes the computation harder. "
+What is the major difference between variational autoencoders (VAEs) and flow models? ,"The latent space has smaller dimensionality in VAEs, but same in flow models. VAEs compress information. "
+What did Geoff Hinton think is the key to creating useful representations of natural languages or images? ,"Hierarchy. Specifically trying to learn the part-whole hierarchy.
+For each patch of an image, or token in NLP, visualize each embedding as containing part/whole hierarchical encodings (a column of vectors, with more abstract concepts at the top, which agree across columns). "
+What is the basic unit of interpretability in an audio transformer? How is a sequence of tokens extracted? ,You take a discrete FFT over certain time sequences of data (choose a context size). This is like the embedding vector. 
+"What would you call a transformer with attention across examples in a minibatch, used at test time? ",Non-parametric transformers (NPTs) (Cohere AI) 
+How did Cohere AI seek to extend the transformer architecture ,"Non-parametric transformers (NPTs)
+They do transformer attention across examples in a minibatch, as well as within a sequence. Show that it improves accuracy a little "
+"What is a parametric model vs a non-parametric model?
+Describe the difference, then give an example of each. ","Parametric is predicts data x given parameters theta and theta only.
+Non-parametric is it can use other data at test time to help predict the result. 
+Examples are direct generative models, vs kNNs to classify an object. "
+What are two problems with the byte pair encoding (BPE)? ,"It assigns varying importance to words (varying number of tokens)
+It gives different outputs based on different factorization (the number of spaces after a word can affect the meaning encoding) "
+What uses/example cases were shown for the perceiver architecture (Deepmind)? ,"They can stop using byte pair encoding and still achieve good loss on NLP. They want to do this because BPE has problems.
+The real benefit is not making an assumption of the structure of the input data. The positional encoding and embedding can just be learned as necessary. "
+What is the goal of the perceiver architecture (Deepmind)? ,"Problem of attention being quadratic
+Problem of attention architecture being designed for a fixed context/modality. "
+How is the perceiver architecture (Deepmind) different from a normal transformer? ,"Query is a learned set of vectors with a fixed number of tokens. 
+Keys and values are linear in input.
+Transformer operates in this embedding space, after that one crossed attention input. "
+What is the idea of a mixture of experts or switch transformer? ,Try to reduce computation time and make architecture adaptive by only triggering computation using subsets of the network when necessary. 
+What is the Pearson correlation coefficient? And what values can it take? ,"It is a measure of linear correlation between two sets of data. It is the ratio between the covariance of two variables and the product of their standard deviations; thus, it is essentially a normalized measurement of the covariance, such that the result always has a value between −1 and 1."
+What counts as patent infringement in terms of the actual document and the claims? ,"Must infringe on all elements of a claim completely to infringe on a patent
+But it only has to be one claim out of all of them. "
+"What is the circuit found in the mechanistic interpretability paper by Nanda?
+Describe the claims about the output of the various layers, in brief. ","Embedding gets sin and cosine of input at a specific number
+Attention heads + MLP gets neuron activations that are periodic in both a and b (like sin(w(a+b)) ).
+Unembedding gets cos(w(a + b - c)) and constructively interferes a few frequencies to end up with result "
+"In the article ""Progress measures for grokking via mechanistic interpretability"" by Nanda et al, what feature of the network training was required to observe grokking, they say? ","Weight decay must be present, they observe.
+Other evidence is: There is a signature in the norms of weights at each transition during training. "
+"In the article ""Progress measures for grokking via mechanistic interpretability"" by Nanda et al, what tools are used to measure behavior? ","General loss (test and train)
+Ablation of key frequencies or of non-key frequencies, and test/train loss. "
+"In the article ""Progress measures for grokking via mechanistic interpretability"" by Nanda et al, what is the final interpretation of the process of Grokking? ","First stage: memorization (train loss goes down, test is still bad)
+Second stage: Building a generalization circuit (and can detect this with other methods), but still using memorization for prediction (still high test loss)
+Third stage: forgetting memorization information, and generalizing (now test loss goes down) "
+What is Grokking in a language model? ,"Train loss goes down early, but then later test loss goes down "
+"What is the test setup/architecture for the article ""Progress measures for grokking via mechanistic interpretability"" by Nanda et al? ",Main subject: modular arithmetic with a 1 layer transformer and MLP
+Describe the transformer-XL architecture. How is the context length extended? ,"Previous layer hidden states are cached, and are not used to compute gradients or anything. 
+For each segment of tokens under test, the keys and values for each layer are extended in context backward by one additional segment.
+As a result, the effective context size is increasing backwards like a triangle segment size * layer number. "
+What is the statement of the Cramer Rao bound? ,"The inverse Fisher information is a lower bound on the expected variance of an unbiased estimator of a parameter, given the data. "
+The Fisher information has two equivalent formulations. What are they? ,"It is the expecation of negative curvature of the log likelihood.
+It is also the expectation of the variance of the Fisher score (derivative of log likelihood). "
+What is the intuitive description of the Fisher score? ,"It is derivative of log likelihood of x with theta.
+So when this is large, it says the fractional change in x with theta is large, so s carries a lot of information about the posterior on theta. "
+What is the prior predictive density for a Bayesian variable x with some distribution dependent on parameters theta? ,"It is the distribution over x, averaged over the distribution of theta as well. "
+How is the Fisher information related to the certianty on the parameters of a distribution? ,Fisher information is inverse certainty (variance of parameters). High fisher = low variance. 
+What is the intuition about the size of the Fisher information for a distribution and some data? ,"If Fisher information is large at the MLE, this means you are at a very strongly peaked maximum of the likelihood. So your certainty on the parameters will correspondingly be high. "
+What is the first derivative of the log-likelihood function with respect to the parameters of the likelihood function? What about the second derivative? ,"The first derivative is commonly known as the Fisher score function.
+The Fisher information is the negative expected value of the second derivative. "
+What is the Fisher score function? ,The first derivative of the log-likelihood function with respect to the parameters of the likelihood function is commonly known as the Fisher score function. 
+What is a maximum likelihood estimator (MLE) ,The maximum likelihood estimator (MLE) of some parameters of a distribution is the value of all possible parameters that maximizes the likelihood of the data that was observed. 
+What is the likelihood function of some observed data and probability distribution? ,The likelihood function of some observed data with some parametrized probability distribution is a function of the parameters of the distribution. It is the probability of observing the data given the parameters. 
+What is the additional requirement for the mapping in multi-dimensional flow models compared to single dimensional? ,The mapping change of variables determinant must be easy to compute (in addition to being invertible and differentiable). 
+"What did the NICE (2014) and RealNVP (2016), and Glow (2018) papers implement, and how did the latter ones add on the former?","NICE: Partition into 2 sets, do some transformation on one set to make the multi-dimensional flow model easy to calculate and invert. 
+RealNVP: Do affine transformation on the other set. And partition in interesting ways to advantage the priors (ie use checkerboard on an image, and things like that).
+Glow: adds a 1x1 covolution of the image which basically just permutes between the images, and is easily invertible. This makes it even more able to disentangle variables."
+What did the NICE paper (2014) argue is the motivation for multi-dimensional flow models?,"A good representation has independent latent variables.
+They say: ""It is based on the idea that a good representation is one in which the data has a distribution that is easy to model. For this purpose, a non-linear deterministic transformation of the data is learned that maps it to a latent space so as to make the transformed data conform to a factorized distribution, i.e., resulting in independent latent variables"" "
+"Name the 3 main papers from CS294 lecture on multi-dimensional flow models, and their full names (not just acronyms)","NICE (2014) on non-linear independent components estimation
+RealNVP (2016) on real-valued non-volume preserving transformations 
+Glow (2018)"
+"In multi-dimensional flow models, such as Glow by OpenAI, what is one unique way to use the latent space for generative applications? ","Can measure two classes of objects, find their relative vector, and then augment other images along this axis (like smiling) "
+What is dequantization in a flow model? ,"Perturb your data if it is discrete before trying to fit a continuous flow model.
+Ie add uniform noise in some range (corresponding to the distance between discretization) "
+What is one major drawback of an autoregressive multi-dimensional flow model? ,"Given the mapping parameterization, the sampling problem has to be done sequentially, but computing each x from each z separately. 
+Training is simple and fast, but sampling is slow.
+Inverse autoregressive model is the opposite (fast sampling, slow training) "
+"Give an example of an autoregressive multi-dimensional flow model, and an inverse one ","Forward model:
+Z_1 = F_1(x_1)
+Z_2 = f_2(x_2; x_1)
+Z_3 = f_3(x_3; x_2, x_1)
+Inverse swaps z and x."
+"For multi-dimensional flow models, what are the main differences in the MLE estimator from a 1D flow model?","You now have to use the jacobian of the transformation, rather than just the derivative. 
+Log of p(z) is potentially more complicated as well, since the distribution is not necessarily separable into the different dimensions of z. "
+Give a few examples of maps for a 1D flow model that are invertible and differentiable,"Mixture of cumulative density functions of gaussians 
+Mixture of logistics. "
+What are the two core requirements for a 1D flow model map in order to work?,Must have f_theta(x) be invertible and differentiable 
+What is the prototypical example of a 1D flow model?,"Cumulative density function IS a NORMALIZING FLOW that maps any density over x to the uniform distribution over z in 0 to 1. 
+map: Z = F_theta(x) = cdf up to x of pdf.
+Result: sample in z, map to some area in x. Can imagine that large density x regions map to fast changing CDF, which gets sampled often. 
+Analytically: get prob in x from probability p(z) * df/dx = p_theta(x)."
+Describe the basic steps of a 1D flow model for inference and sampling.,"Pick a latent space for variable z, and some underlying distribution for z, called p(z) (like a unit Guassian over z).
+Generate a test distribution over x by mapping from this latent space for z to x in a specific way. The parameters of the distribution over x are the map between z and x. This ensures normalization. 
+Find the optimum map parameters to reproduce the data. "
+What is the main purpose of a flow model for embedding a random distribution in another variable? ,"Disentangle subspaces of relevant behavior into independent dimensions to improve sampling and interpretability. 
+Deal with continuous data in a stable way. "
+List a few of the attention patterns used to upgrade transformers that try to reduce the complexity scaling with context length. ,"Strided context or fixed (spaced) context (Sparse transformer)
+Combining local and global context (Extended transformer construction, Longformer, and Big Bird)
+Hashing for L log(L) scaling with token length (Reformer, Hash keys. Find groups, then only attend within groups, and from final token to next group.)
+Low rank attention (Linformer - linear complexity, Project token space down to a smaller dimension somehow ) "
+"What is the main defining characteristic of the Universal Transformer architecture, as opposed to the vanilla transformer? ","Universal ""aims to benefit from both a long-term global receptive field of Transformer and learned inductive biases of RNN.""
+It has a single layer with parameters, but repeats a variable number of layers. Stops when certain conditions are reached. "
+What are two methods tried to adjust the attention mechanism in transformers based on distance? What axes can be addressed? ,"Distance-aware attention (Add learned biases to each key attention based on relative distance)
+Adaptive attention spans (Each head learns a context size to use (has to decay at end to be differentiable) "
+What are a few methods tried to increase the context length of transformers? ,"Transformer-XL: Use previously computed hidden states 
+Compressive transformer: Compresses memories intentionally then keeps them in context 
+External memory: stores key-value pairs "
+List a few of the positional embeddings used in transformers ,"Fixed sinusoidal
+Learned positional
+Relative position encoding 
+Transformer-XL position encoding
+Rotary position embedding "
+"In the ROME: Rank one model editing paper, what was the final location of most stored memories? What spot was most effective on average for restoring faculty? ","""This hypothesis localizes factual association along three dimensions, placing it (i) in the MLP modules (ii) at specific middle layers (iii) and specifically at the processing of the subject’s last token."" "
+"In the ROME: Rank one model editing paper, what method was used to locate the stored position of factual memories? ","Measure object prediction in a phrase.
+Measure object prediction after corrupting subject data (adding random noise to first embedding)
+Restore output of specific heads in specific layers to see how they improve final prediction. "
+What does ROME stand for (a method in transformers)? ,"ROME: Rank one model editing 
+Is a method of altering memories in a transformer "
+What are two general ways to look for behavior in a language model (for example when identifying induction heads)? ,"Correlation analysis
+Causal analysis through perturbations (ie. ablations). "
+List the major sources of correlative evidence for induction head formation that were found in the post by the anthropic people. ,"In context macroscopic learning loss correlated with induction head formation
+Also with a bump in training loss
+Also with a change in the PCA of the loss behavior. "
+"What macroscopic loss metric was measured in the post ""In context learning and induction heads"" to determine if inductive behavior was occuring? ",In context learning loss is measured by looking at loss at 50th token and 500th token (better loss at end = in context learning)
+"What behavior was measured in the post ""In context learning and induction heads"" to determine if an attention head was an inducation head? ",Induction head appearance is measured by success on random token repetition prediction. If a head predicts repeated sequences to happen again (even if never seen before) this is considered an induction head. 
+"What was the main goal of the post ""In context learning and induction heads""? ",Goal is to try to determine the mechanistic source of in context learning within toy models and large models. Also to argue it is induction heads. 
+What is the main statistical failure present in the skip-trigram interpretation of a 1 layer transformer?,"Skip trigrams learn statistical associations, but the value vectors are added together linearly. 
+So if two skip associations are present, along with both trigger keys, then the model will statistically mix up the next token between them. "
+"What is a zero layer transformer equivalent to?
+What about a 1 layer transformer?","Zero layer just embeds and unembeds. The learned transformation will just be bigram statistics. 
+One layer can incorporate skip-trigram statistics. It can learn to search for previous tokens corresponding to each token, and if they are present, output some specific value. "
+"What is an alternative way to visualize the query/key transformation of an attention layer, and the output value? ","The query-key matrix is a low rank matrix of size n_emb by n_emb that determines mappings between token positions (based on their embeddings)
+The output-value matrix is a low rank matrix of size n_emb by n_emb that maps within a single token to other embeddings for other tokens.
+These act on separate spaces as linear transformations. "
+What were the main parameters determining whether there was presence or absence of superposition in the toy model of superposition by the people at anthropic? ,"Sparsity is required. 
+ReLU is requried, with a negative bias added as well, so that certain features can not activate other features. "
+What methods were used to visualize the presence or absence of superposition in the toy model of superposition by the people at anthropic? ,"They visualize the low rank W^T W matrix, which is a n x n matrix mapping features to features. It is mostly diagonal, and diagonal values should be 1 on average, since they reconstruct the same feature (should be identity)
+The squared norm of the off diagonal parts of W^T W rows tells how much of each feature is not orthogonal to others. 
+The total norm of each embedding tells whether something is represented or not."
+What are the features of the input and output space of the toy model for superposition detection proposed by the folks at Anthropic? ,"Input has uniform sparsity (probability S that feature = 0, otherwise uniform in [0,1]
+Feaures have varying importance (in the final MSE loss function for each feature).
+Features x_i are independent.
+Loss is MSE loss of input compared to output, with varying importance."
+Describe the setup of the toy model for superposition detection proposed by the folks at Anthropic ,"Take a high dimensional feature space of dimension n 
+Encode this set of features down into a smaller embedding space of dimension m < n using an embedding matrix W. 
+Decode using W_transposed back to feature space and adding a feature-dependent bias, then apply ReLU.
+Goal: see if features can be reconstructed or not, and whether superposition arises. "
+What assumption is necessary for superposition to occur in a toy model with non-linear activation? ,Sparisty is required: assumes features don't activate often (so don't activate together often) 
+What are two equivalent formulations of the output of the attention head in a transformer? ,"Can output low dimensional embeddings, then stack them, then project.
+Can output low dimensional embeddings, then project to high dimensions, then add them.
+Basic idea is attention heads can be seen as added together, linearly independently. "
+"For a transformer being used to predict action sequences in reinforcement learning, what conditional information can be fed in to affect the behavior? (Think of the caption being used to condition the image embedding in CLIP) ","You can specify the target final reward, and get the agent to choose a trajectory which is close to achieving this reward. "
+What are a few examples of bottlenecks for information in a transformer? ,"Value vectors are much lower dimensional than the original representation, and are the only way to copy information from one token to another. 
+The residual stream is the only way to copy from one MLP layer to another MLP layer, and this is much lower dimensional than the input to the MLP (and must compete with all other information stored in the residual stream). "
+What is an induction head in a multi-layer attention only transformer? ,"First layer head copies the previous token's information into the current token. In order to make a key that corresponds to the previous token, and a value corresponding to the current token
+Second layer induction head finds previous instances of keys corresponding to itself. Then copies value from next token that came after its previous instance. "
+Properties of Hermitian matrices ,"A dagger equals A
+Implies it is diagonalizable (because of Shurs decomposition and properties of a normal matrix).
+All eigenvalues are real because you can take inner product with eigenvectors, and then conjugate it, and its the same.
+All eigenvectors with differing eigenvalues are orthogonal. "
+"What does the Shur decomposition ensure, and how does the algorithm proceed? ","It ensures every complex square matrix can be transformed into an upper triangular matrix in another basis.
+It proceeds by identifying one eigenvector/eigenvalue, then decomposing the matrix into that subspace and its complement (removes all elements except for one in a column). Then repeat. "
+How does the self-attention autoregressive model significantly improve on the pixelCNN architecture? ,"It still achieves parameter sharing, but doesn't restrict to local information propagation. It sees full conditional context at all layers. "
+How does the PixelCNN architecture improve on the wavenet architecture? And what feature is slightly more complicated to implement than you might expect? ,"Introduces 2D convolutions/skip connections.
+Difficulty is it also potentially introduces blind spots in the convolutional geometry, so you have to do special things to combat that."
+What additional feature was necessary to make the wavenet architecture work well on image generation (such as MNIST)? ,Including positional encoding is crucial for it to work on MNIST data. 
+How did wavenet improve on the MADE autoregressive modelling method? ,"It introduces shared parameters, as well as skip connections or ""dilated convolutions"". "
+"Comparing masked autoregressive models to recurrent neural networks, what is the main computational difference? ",Masking allows for more parallel computation. 
+"In the various approaches to autoregressive models, what are a few of the metrics or axes to compare architectures? ","Whether parameters are shared between different tokens (self attention it is, convolutional approaches it is, MADE it is not). 
+Degree of connectivity or the receptive field size. "
+"Methods to improve speed in autoregressive models, such as RNNs and Wavenet: ","Essentially break up hierarchy of conditioning (this has representational costs, as it reduces expressive power). However, this allows sub-sections of the image to be computed in parallel.
+Caching (doesn't reduce expressive power). Example with Wavenet: can reuse previous computations. Makes next layer more like a linear problem I think? In the number of layers. "
+4 types of masking mentioned as the historical progression in CS294 on autoregressive models,"MADE: masked autoencoder for distribution estimation
+Wavenet: masked 1D convolution architecture
+PixelCNN: generalization of wavenet to 2D
+Self-attention"
+How to improve recurrent neural networks (RNNs) on the MNIST image dataset? ,Add a positional encoding as part of the conditional information. 
+What are two ways to simplify an auto-regressive model for sampling and inference? ,"Reduce context: Reduce size of conditional to make model simpler, and learn simple model
+Reduce parameters, but keep full context: Or keep the model using full context, but learn it with a sufficiently complex neural network with regularization. Example: have an MLP for each marginal distribution. "
+When is an autoregressive model possible for some probability distribution? ,"Always! Probability of joint observation is product of marginal probabilities conditioned on previous observations. This is exact
+Log prob of this becomes sum of log probs given parents. "
+How can you achieve sampling and inference using a histogram of data dependent on a 1D variable?,"Inference: given x, get p(x) from histogram directly (no model necessary)
+Sampling: just generate cumulative distribution vs x (picture cumulative on y axis), then uniform sample, then take location y and find x location. This gives position x with probability proportional to derivative of cumulative function, so is correct
+Problem: If data is sparse or high dimensional, this fails "
+What are two metrics to use when evaluating the efficiency of a generative model? ,"Computational efficiency (how much resources to run)
+Statistical efficiency (how many examples necessary to achieve a decent representation). "
+What does MADE stand for? (it is a deep learning architecture) ,MADE: Masked Autoencoder for Distribution Estimation 
+"How do you find the statistical uncertainty on the odds ratio for a 2x2 treatment and control situation, testing some outcome?","Each outcome has Poisson noise: each has fractional variance 1/num samples. Then you do chain rule to get total variance. 
+The log of the odds ratio is a sum of independent random variables, so it is best to use to get the total uncertainty. 
+Then you can get a confidence interval on the log of odds ratio, 
+then exponentiate it's edges to get the confidence interval for the odds ratio."
+What is the odds ratio for testing a drug intervention? ,The odds ratio is defined as the odds of an event in the active treatment group divided by the odds of an event in the control group. 
+The derivative of the sigmoid function sig(x) is: ,"If the sigmoid function takes value sig(x), its derivative is sig(x)*(1-sig(x)). This goes to 0 at large amplitude input values, negative or positive."
+What is the derivative of the entropy function for a bernoulli variable? What can it be written in terms of? ,"Is is minus the logit. You can also remember this based on the shape of the entropy function, and shape of the logit function. "
+How do you get a confidence interval for a gaussian distributed variable? ,"For a given confidence interval (like 95%), look up the z value corresponding to that. Z value is deviation/std. deviation.
+For your variable in question, you have a 95% chance it lies within +/- that z value of the estimated value."
+"What is the relation between the logit function, odds, and probability of an event occuring p? ","p = odds/(1+odds) = sigmoid(logit)
+logit = log(p/(1-p)) = log(odds)
+odds = exp(logit) = p/(1-p)"
+What is the logit function for an event with probability of occuring p? ,"it is the log of the odds, so log(p/(1-p)).
+It is 0 at p=0.5, and goes way up/down at 0 or 1. Like a sideways s shape."
+What is the definition of the odds of an event occuring? ,"If event occurs with probability p, odds are p/(1-p)."
+"Optimizing the input to a neural network for activation of a specific neuron also requires some other constraints, or you get adversarial activations. What else must you potentially do to control for this? ","Examples are 
+frequency penalization, 
+transformation robustness (scale, shift etc), 
+or having a strong prior for realistic images "
+How can you create an image that causally activates a certain neuron or vector in a network? ,"Optimize pre-softmax logits to be large (this is better than optimizing post softmax for producing visually striking images, because post softmax optimization tries to reduce excitation of others)
+Can optimize for de-excitation as well
+Optimizing activation also requires some other constraints, or you get adversarial activations "
+Name a few examples of low-level building blocks and primitives of neural network circuits ,"Equivariant low level detectors: curve detectors and high-low frequency edges
+Unioning over cases to obtain pose-invariant detectors
+Superposition to store information for later more efficiently "
+Describe the basic setup of a simple recurrent neural network (RNN) ,"Input is a vector at each timestep, along with a hidden state.
+Output is a new hidden state, and a prediction vector. 
+Computation is:
+Get new hidden vector h_new = tanh(W_hh * h_prev + W_xh * x)
+Get new prediction y = W_hy * h_new "
+What are the drawbacks of recurrent neural networks (RNNs)? ,"Not long enough memory. 
+Encoding can be too compressive 
+Don’t allow for parallel computation "
+What is the difference in optimal scaling found in the Chinchilla paper (Deepmind) vs OpenAI paper by Kaplan? ,"Kaplan suggested 10x compute increase should use 5x parameter increase, and 2x training increase.
+Chinchilla paper by Deepmind finds equal proportion increases instead."
+"TD learning, Monte Carlo, and lambda returns are all ways of _________. ",Sampling the value function 
+"Match the following methods of choosing an action to the corresponding reinforcement learning algorithm:
+Algorithms: Value function, Q function, Policy probabilities, MCTS
+Actions: highest visit count, look ahead and best value, direct choice of optimal action, direct action sampling ","Q function + direct choice of optimal action
+Policy probabilities + direct action sampling
+Value function + look ahead and best value
+MCTS + highest visit count "
+MCTS can be thought of as a type of __________ in the generalized policy iteration framework. ,Policy improvement operator 
+What types of regularization are common in reinforcement learning? ,"Environment: Opponent pool choice and upper confidence bound
+Network: L2 regularization of network parameters 
+Action: Entropy favoring in policy gradient"
+"What are the different ways to predict the target for training a reinforcement learning algoirthm? That is, what are the different targets used? 
+Hint: it's always related to total expected returns ","Sampling value function (on policy). Types: TD learning, Monte Carlo, and lambda returns 
+Q learning (off policy) using Bellman equation
+Policy gradient formula (on policy). Types: Vanilla, baseline, and PPO (batch training, and clip)
+Direct action prediction (cross entropy loss in AGZ) (on policy) "
+What are the different types of outputs from a reinforcement learning algorithm to use to choose the action to take for the global policy? ,"Value function + look ahead and best value
+Q function + direct choice of optimal action
+Policy probabilities + direct action sampling
+MCTS + highest visit count "
+What are the three possible physical implementations to use in encoding value in reinforcement learning? ,"Lookup table for state
+Feature vector and lookup table
+Neural network "
+"What architectural changes were made in alpha Go zero compared to alpha go, which allowed it to have a deeper RL architecture? ",Used residual connections and batch norm. 
+What are the main parameter choices to make in the vanilla MCTS algorithm (for example the kind which I used in the Tron game)? ,"What rollout policy to use (has to be fast, but also somewhat accurate)
+What upper confidence bound exploration pareter to use (need to not branch too much for computational efficiency) "
+What are the main components of the monte-carlo tree search algorithm? ,"Selection of the node to expand, 
+expansion of the tree, 
+simulation from that node to the end of the game, and 
+backup of value to all parent nodes, then 
+final action selection "
+"Why is realistic speech generation necessary, rather than just a cool artistic thing? ","In a noisy environment, it can significantly improve understanding. "
+Why is unsupervised learning useful? What tasks can it be used for? ,"Take advantage of huge amounts of data. Improve a downstream task with fine tuning. Compression of information (representations).
+Generate novel data "
+"What did Betthauser et al (2023) measure as the metric for the ""learning deficit” during the pandemic school disruption?","Cohen’s d is calculated as the difference in the mean learning gain in a given subject (maths or reading) over two comparable periods before and after the onset of the pandemic, divided by the pooled standard deviation of learning progress in this subject.
+Result is a cohen's d of around -0.14, which corresponds to 1/3 of a year of learning."
+What did Betthauser et al (2023) show about the time dependence of the learning deficit (cohen's d) after the pandemic?,"It is persisting over time, and across countries. "
+What is cohen's d statistic? ,"It is the difference in mean value between two populations, divided by the normalized pooled standard deviation (basically quadratic mean). "
+"In the paper ""The Increasing Dominance of Teams in Production of Knowledge"" what is the main thesis? ","Over time, research is more often done by teams and larger teams.
+Teams receive more citations and are more likely to be found in the top end of citations. "
+"If a paper is made by a team or a solo author, what is the ratio of the likelihood it ends up in the high citation regime (1000 to 10,000 citations)",6 times larger that it came from a team (not necessarily causal).
+"In the paper ""The Increasing Dominance of Teams in Production of Knowledge"" (2007), what was the change in team paper citations compared to solo paper citations in the sciences from 1950s to now?",Ratio of team paper citations (on average) to solo paper citations (on average) went from 1.5 to 2 or so
+"In the paper ""The Increasing Dominance of Teams in Production of Knowledge"" (2007), what was the change in mean team size in the sciences from 1950s to now?",Mean team size in sciences went from 2 to 4 basically from 1970 to now.
+How did the pandemic affect low income school closures vs high income school closures? ,"Low income had an extra of 5-10 weeks of school closure within a state, after controlling for overall state differences."
+How did the pandemic affect school outcomes on average for school age children? What is it equivalent to? ,"Equivalent to around 1/3 of a school year lost, on average. 
+Test scores dropped by around 0.3 std deviations, with around 0.2 extra for 50% remote instruction."
+"In the paper ""Can behavioral interventions be too salient?"" (2022), what did they conclude as general takeaways?","Be careful designing interventions that my hurt. 
+Grabbing too much attention can cause distraction and crashes (and they showed it was distraction). 
+Impact did not persist after treatment stopped. "
+"What was measured/perturbed in the paper ""Can behavioral interventions be too salient?"" (2022)?","They displayed traffic deaths on a sign in texas, and this did not improve safety on net. In fact it increased crashes by almost 5%. 
+It was too salient, and increased traffic accidents."
+Are global fish stocks in collapse? Why or why not? ,"The optimal fish population for sustainable extraction of maximum resources (stable population) is sometimes 50% smaller than historical levels 
+This is because catch can be larger and larger and take home grows (population isn't much effected) but eventually the population gets depleted too fast and your catch goes down"
+"Which fish types are subject to overfishing, and which are not? ","Sharks and rays are bad
+Tuna is generally pretty good (Depends on geographic location and which type of tuna) "
+"In the paper ""Greening of the Earth and its drivers"" (2016), what methods were used?","Satellite observation of leafy coverage 
+Climate models to predict causes. "
+"What was the main quantitative result of the paper ""Greening of the Earth and its drivers"" (2016)?","""We show a persistent and widespread increase of growing season integrated LAI (greening) over 25% to 50% of the global vegetated area""
+""...models suggest that CO2 fertilization effects explain 70% of the observed greening trend""
+Average rate is 0.07 m^2 per m^2 per year, so around increase by 2 (not a factor of 2) from 1982 to 2009."
+What main metric is used to see how plants respond to climate change? ,Leaf area index: surface area of leaves per unit of surface area of earth. Can use units in paper to understand from there. 
+What main factors are used in the model to predict changes in leafy area coverage for predicting forest greening with climate change? ,"CO2 concentration
+Nitrogen concentration (deposition)
+Climate change (Temp change and Precipitation change)
+Land cover change (I think this means clouds?)"
+Name a few technologies first used in world war 1,"U boats from germany cause heavy losses of england navy 
+Germany tries to blockade england, but ends up sinking a lot of US people, and that is a big reason the US joined the war. 
+Trench warfare
+Bombs
+Aircraft
+Tanks
+Chemical warfare "
+What was the outcome of world war 1?,"Ottoman. Is totally cut up to modern states. This is not what was promised to Arab countries. 
+Austro-hungarian empire is cut up into modern day states. 
+Germany cedes a lot of land. Has to have ""war guilt clause"" and pay a bunch of nations. Reduced military (Versailles)
+League of nations is formed (versailles) "
+"What are a few methods of monetary policy used by the government, and what do they do? ","Change bank reserve ratio (more or less cash on hand)
+Change federal funds rate (ie change short term interest rate offered by government directly) (more or less cash on hand)
+Buy and sell treasury securities (bonds) on open market (called open market operations) (more or less cash on hand) "
+How can innovation and technology reduce interest rates? Why is this unintuitive? ,"If you discover a way to extract huge amounts of natural resources, then the marginal return on new resources will go down, so interest rates go down.
+This is unintuitive because usually increased technology = more return on investment = higher interest rate on average. "
+"What sets the interest rate of an economy, in the absence of monetary policy/government intervention? ","The productivity of capital on average sets the interest rate, given the total capital supply and technology at a certain moment in time "
+What was the Bretton woods system? ,An international monetary gold standard tied to US dollar after WW2 until 1971 inflation/energy crisis
+How can GPS be enhanced in accuracy? What is the bottleneck using this method? ,"Use multimodal sources of information, such as local wifi, and ground-based positioning emitters. 
+Difficulty is getting timing precision sub-nanosecond for ground-based emitters. "
+"In the paper ""Semantic reconstruction of continuous language from non-invasive brain recordings"" by Tang et al (2022), what was the basic setup?","Have people listen to stories in an fMRI machine, then train a decoder to predict the text or thoughts when presented with new fMRI data. "
+"What did the paper ""Induction of visual orientation modules in auditory cortex"" (2000) do experimentally?","Rewire visual nerve to go to auditory cortex in ferrets, and see how it develops. "
+"Paper ""Connectomes across development"" (2020), second order results about synapses: major conserved themes.","Increasing modularity with age
+Synapses become more feed forward (from sensory, to integrated processing, to motor)
+Central processing or interneuron structure was relatively conserved. "
+"Paper ""Connectomes across development"" (2020), first order results on synapse structure","Synapse density per axon length is roughly similar during growth and across individuals.
+Actual map is different though. "
+"Paper ""Connectomes across development"" (2020) measured synapses in what animal using what technology?","C. Elegans, using Scanning Electron Microscopy after cross sectioning. "
+What is the major thing that differentiates the Proterozoic era from the Archaen era? ,"Development of Eukaryotes (around 2 billion years ago), and then multicellular life (around 1.6 billion years ago)"
+What differentiates the beginning of the Archaen era from the Hadean era? ,"Hadean had water -> Archean has single cell life, and then later photosynthesis. "
+"What are the 4 major historical epochs of the earth development, and their times?","Hadean: 4.5 billion to 4 billion years ago. 
+Archaen: ends 2.5 billion ago
+Proterozoic: ends 539 million ago (with Cambrian explosion)
+Phanerozoic: current"
+Characteristics of Cnidaria (Coral and jellyfish) ,"special cells cnidocytes for capturing prey, radial symmetry usually, one orifice, decentralized nerve nets "
+Characteristics of Arthropods (insects) ,"chitin, exoskeleton not vertebrate, moulting, segmentation, cambrian period, metamorphosis "
+Characteristics of Porifera (Sponges) ,"unspecialized cells, no nervous or digestive or circulatory system, first to branch off. Are mobile in first cell stage. "
+What are the categories to consider when examining a new robotics application? ,"Spatial configuration (size). 
+Whether it moves. 
+How it interacts with humans. "
+What idea did I have for helping people choose between research fields? ,"Measure: Of authors with publications in multiple fields, which field are they currently in? (example: using arxiv publications)
+Post selects on people who purposefully changed careers and thus people who probably thought a bit more deeply "
+"Ionnidis article ""Why Most Published Research Findings Are False"" (2005) main point","The priors of truth in a field matter, and can mean most published results are false.
+Corollary 1: The smaller the studies conducted in a scientific field, the less likely the research findings are to be true. 
+Corollary 2: The smaller the effect sizes in a scientific field, the less likely the research findings are to be true. 
+Corollary 3: The greater the number and the lesser the selection of tested relationships in a scientific field, the less likely the research findings are to be true. 
+Corollary 4: The greater the flexibility in designs, definitions, outcomes, and analytical modes in a scientific field, the less likely the research findings are to be true 
+Corollary 5: The greater the financial and other interests and prejudices in a scientific field, the less likely"
+"In the paper ""Motivated Numeracy and Enlightened Self-Government"" (2013) by Kahan et al, what two hypotheses were being tested?","People just need to be more informed or taught better statistics.
+Being informed isn't the problem. It's that identity biases trigger bad reasoning, and that doesn't get better with better numeracy
+The latter was more supported. "
+"In the paper ""Motivated Numeracy and Enlightened Self-Government"" (2013) by Kahan et al, what was the experimental setup?","Experiment 1: test individual ability to spot factual or reasoning errors in a study about a skin rash. 
+Result 1: more numeracy = more correct.
+Experiment 2: same thing, but in a study about gun control, does crime increase or decrease.
+Result 2: Both political leanings were bad at catching mistakes that go against their beliefs, but good at catching opposing mistakes."
+"In the paper ""Motivated Numeracy and Enlightened Self-Government"" (2013) by Kahan et al, what was the main result shown?","Individuals higher in numeracy are not better at avoiding polarization. Specifically, they make as many or more mistakes when presented with a polarizing topic. "
+What were the main results of the Deepmind algorithmic distillation paper? ,"It learns from fewer examples than otherwise necessary
+Seeing more initial examples (seed size for text LLMs) leads to faster learning 
+Doesn't plateau like some other algorithm distillation methods "
+How did deepmind use transformers to generate a learning algorithm for exploring trajectories in reinforcement learning? ,"Trained a transformer to predict the next action to take in some environment, to best explore and gain information. "
+"In trying to prove resource requirements for a bandit problem, how do you lower bound the necessary loss? ","Use information theory to argue that there is a minimum number of mistakes you need to make to gather information.
+Goal is to converge upper and lower bounds for loss to prove you have the optimal strategy. "
+"In the Deepmind paper ""Generally capable agents emerge from open-ended play"" 2021, what was interesting about the environment used?","Have a programmatically generated environment to build testing space for agents to be able to function best in a variety of environments 
+Find best ""general agent"" in each generation, and propagate to harder next generation 
+My takeaway: Generative model of environment is like generating fake data for training on Mnist. If it's different enough, it lets you get way better "
+Describe the process of byte pair encoding to compress information to input to a transformer ,"In a large corpus, find most common bigrams, then redefine them to be one thing, and add that to the vocab list. 
+Then repeat, until a certain number of unique objects have been formed. "
+Why does the no free lunch theorem not really matter for AGI? ,"It only really matters for resource constrained optimization problems, where learning one thing well makes you bad at another. 
+In a world where a computer can harness other resources (like a human uses a computer), this is a very weak tradeoff. "
+How does the no free lunch theorem apply to Machine learning? ,"It says there are tradeoffs in learning one function vs another. In the space of all functions, being good at one thing means you are necessarily bad at some other thing. "
+What is the difference between prediction and inference? ,"Do you want a statistically accurate value, or do you want to understand the model "
+"In the GPT-3 paper, when generating news articles that are indistinguishable from human-generated articles, what key features were observed?","Had humans rate their prediction: machine or not? 
+Saw indistinguishability with larger models
+Persisted from 200 to 500 word articles (didn't see decay with article length, which sometimes happens as models drift during generation)"
+What key example discussed near the end of the GPT-3 paper was used to compare the model to humans?,"Generating news articles that are indistinguishable from human-generated articles, from the same title and subtitle. "
+What was one goal of the GPT-3 paper as compared to Kaplan et. al. 2020?,One goal was validating the general scaling laws proposed by Kaplan at a higher order of magnitude. 
+Name one limitation of the Codex model from the original paper (2021),"Still very sample inefficient training compared to a human programmer 
+Failure increases with docstring length
+Can reference variables outside the scope "
+What is an example of a situation where a more nuanced success metric for code generation is needed compared to pass@k? ,"Ex. For auto-complete prompts, you cannot present all possible solutions. You must choose one to show the user. "
+"In the Codex paper (2021), what method was found to be best for choosing the sampled output to present to the user?",Best way is mean token log probability throughout the generated sequence. 
+How must the optimal temperature be tuned for the pass@k metric for GPT-codex? ,"You want a higher temperature for larger k in pass at k, to have more probability of generating meaningfully different samples. "
+"What detail of the codex paper differs from GPT-3, that is not part of the architecture?","The tokenizer is adjusted to account for specific things relating to code, rather than natural language (adjusts for whitespace). "
+"In the Codex paper (2021), the model was fine tuned to succeed at what tasks?","Fine tuned on successful solutions to get a better model.
+Fine tuned on generating a doc string. "
+"In the Codex paper (2021), why is the pass@k metric difficult to compute?","Just using 1 - (1-p)^k for the estimate of the pass@1 p, is systematically underestimating it. 
+Instead they have a ratio of binomials in some form to accomplish it."
+"In the Codex paper (2021), what metric is used instead of 0 shot and few shot learning?","Pass@k, or the pass rate for having at least one successful sample out of k samples "
+"How to visualize the process of patent formation abstractly, from the point of view of general progress in society. ","Visualize a set of Venn diagrams. Each successive patent comes into existence as a subset of previous patents or claims (and a specific patent usually has many component subsets).
+Visualize the frontier of ideas. Patents come into existence, hold for some time, then disappear. All past area claimed by patents cannot be re-patented. Only smaller areas can. It's like encouraging tree search in the space of ideas. "
+What is the main tradeoff between patents and trade secrets? ,"Summary: Protection level, time, and cost. 
+Patents have stronger protections against reverse engineering and independent invention, but last for less time and require full disclosure, and cost more.
+Trade secrets are not protected from reverse engineering and independent invention, but last forever, don't require disclosure, and cost less to enforce. "
+What legal framework is the concept of non-disclosure agreements aimed at safeguarding? ,Trade secrets 
+Is a trade secret something you apply for? ,"Unlike other forms of intellectual property, such as patents, copyrights, and trademarks, which generally require registration in order to be fully effective, trade secrets are essentially a ""do-it-yourself"" form of protection.
+You do not register with the government to secure your trade secret; you most simply keep the information under wraps. Trade secret protection lasts for as long as the secret is kept confidential without any statutory limitations period. "
+What are two characteristics that must be present for a patent public disclosure? ,"Has to be sufficiently public (and a reasonable expectation of it being public)
+Has to enable replication or disclose the full technology "
+"What are the two protections afforded to a person trying to patent their work in the US, to help them have enough time before ""first to file""? ","Novelty grace period (yourself not considered prior art)
+Disclosure shield - further prior art is not a problem for first to disclose "
+Why is the disclosure shield for a patent very weak after the America Invents Act in 2011?,"It can be invalidated by the claim of obviousness if someone publishes a public disclosure of a submethod, which is different from yours, but makes yours obvious, before you actually file. "
+"What are patentable subject materials, and what aren't? ","Yes: Process, machine, manufacture, and composition of matter
+No: laws of nature, natural phenomena, or abstract ideas "
+What are the 4 main criteria of an idea necessary to get a patent?,"It must be patentable subject material: Process, machine, manufacture, and composition of matter (and it must not be laws of nature, natural phenomena, or abstract ideas)
+It must show: Utility, novelty, non-obviousness (and if you are in an “unpredictable field” like bio, you need to provide more evidence) "
+Patent blocking: describe what it is ,"You can get a patent on some narrow point of a broader patent (ie if it is a novel sub-idea), and then be blocked from practicing it by the broader patent that someone else holds.
+But the broader patent holder is not blocked, because they don’t infringe on all aspects of the more narrow patent.
+This is necessarily asymmetric. "
+"If you legally sell a patented object to someone, and then they sell it to someone else, does the second person need to obtain patent rights? ",No. The first authorized sale removes all restrictions that the patentee can exercise on the object. 
+What is meaningfully different about indirect and direct patent infringement with regards to intent? ,Direct infringement doesn't need intent. Indirect infringement needs intent to be valid. 
+"What are the two types of patent infringement, and which must be present to bring litigation? ","Direct infringement (making, using, selling, or importing)
+Indirect infringement (encouraging or enabling someone else to do this).
+Direct infringement is always necessary to bring litigation. "
+How do a group of patent owners determine who can be licensed to use the patent in the US? What about in the rest of the world? ,"In the US any of the individual patent owners can license, but unanimous agreement is necessary to sue someone for infringement.
+In other places, it is the opposite (hard to license, easy to sue) "
+Patent authorship - how to figure out who is included? ,"Just have to have contributed to at least one claim, then treated equally 
+Don’t need to know if something works in order to have conception "
+What are the three major branches of patent law? ,"Prosecution (making the patent, filing it, and getting it issued)
+Litigation (sueing for infringement)
+Licensing (contracting it out, can be totally private) "
+What was the main change inherent in the America invents act of 2011 relating to patents?,US switched from first to invent to first to file. 
+What are the 4 actions that a patent prohibits others from doing?,"Prohibits making, using, selling, or importing 
+It is a negative right "
+"When measuring the scaling laws for neural network test loss (log MLE), what are the control parameters to think about? ","Control variables are:
+Tokens trained (data size)
+Parameters of model (model size)
+Compute (tokens times parameters, or petaflop days)
+These are somewhat similar to the OpenAI research tasks (Data, training, and tools) and the major resources improving deep learning (data access, hardware, and new architectures) "
+How does the Dalle-2 paper use the CLIP process for generating images from captions?,"It generates an image embedding based on a CLIP encoding of the text caption, and then decodes that image embedding. 
+This is a tunable thing (allows interpolation between two embeddings) "
+What was the goal of the CLIP paper (Jan 2021)?,"Goal: try to replicate task agnostic web scale pretraining in computer vision rather than NLP
+Leverage huge access to labels on the internet 
+Produce good generalizability "
+What is the tension between process-based vs outcome-based types of ML systems in terms of alignment? ,"Process based systems are easier to interpret, diagnose, and align, but may be less powerful than outcome based systems. 
+This is the idea of the ""alignment tax"". "
+Explain the difference between process-based vs outcome-based types of ML systems ,"Process-based systems optimize the entire process to be correct along the way (and must observe the whole process).
+Outcome-based only target the final outcome. "
+"What is the factored cognition primer, and how is it an example of a process-based machine learning system? ","It is an attempt to lay out a sequential and interpretable machine learning approach to answer questions and solve problems. 
+There is a record of what it said and did. "
+What is the term for extracting the reward function from a set of behaviors? ,Inverse reinforcement learning 
+What is inverse reinforcement learning? ,Extracting the reward function from a set of behaviors. 
+What is goal misgeneralization? ,"Agent pursues a proximal goal that is correlated with the real reward during training, but doesn't generalize well outside of the training dataset. "
+"List a few examples of ""more is different"" in nature ","Think of more physical to more abstract, or less biological to more biological. 
+Uranium. With a bit of uranium, nothing special happens; with a large amount of uranium packed densely enough, you get a nuclear reaction.
+Water. Individual water molecules aren’t wet. Wetness only occurs due to the interaction forces between many water molecules interspersed throughout a fabric (or other material).
+DNA. Given only small molecules such as calcium, you can’t meaningfully encode useful information; given larger molecules such as DNA, you can encode a genome.
+Specialization. Historically, in small populations, virtually everyone needed to farm or hunt to survive; in contrast, in larger and denser communities, enough food is produced for large fractions of the population to specialize in non-agricultural work. "
+How many parameters did the AlexNet convolutional network have? ,60 million
+"In an attention layer with size n_emb, what is the total number of parameters roughly? Walk through the rough math. 
+Apply this to GPT-3","n_emb*(n_emb*3) projects into query, key, and value space.
+Then one output projection is n_emb*n_emb.
+Then MLP is n_emb*(n_emb*4) but it happens twice.
+Final result in total is 12*n_emb^2 for each layer roughly 
+(there's a few more random parameters on the input and output layers).
+---
+For GPT-3 this ends up being around 10,000^2 * 12 or around 10^9 = 1.8 billion params roughly."
+"GPT-3 model size: number of layers, embedding size, number of heads in each layer, and size of each head","96 layers, embedding size of 12288 (or 96*128), 96 heads per layer, and 128 dimensions per head."
+GPT-3 model size: total number of training tokens,300 billion tokens
+GPT-3 model size: total number of parameters,175 billion
+How many parameters are there in the original BERT paper? What about GPT-2?,"In the original BERT paper (may 2019) by Devlin et al, there are 340 million parameters. 
+GPT-2 (2018) had 1.5 billion"
+"In the original BERT paper (may 2019) by Devlin et al, what is the training goal?","""In order to train a deep bidirectional representation, we simply mask some percentage of the input tokens at random, and then predict those masked tokens.""
+They mask around 15% of tokens."
+"In the original BERT paper (may 2019) by Devlin et al, what is the new form of the architecture compared to Vaswani et al?","This is a ""bidirectional encoder representations from transformers"" (BERT)
+It is the same as the encoder block from Vaswani. it is all to all connected attention. "
+"Researchers from what two organizations collaborated on the paper ""Deep reinforcement learning from human preferences"" (2017)?",OpenAI and Deepmind 
+"What game/task was targeted and demonstrated in the paper ""Deep reinforcement learning from human preferences"" (2017),","Atari game, and robotic motion resembling human behavior. "
+"In the paper ""Deep reinforcement learning from human preferences"" (2017), what method was chosen to try to provide a reward on complex tasks that are hard to specify mathematically?","Train a reinforcement learning model to predict human preference between states (supervised learning), then use that reward predictor to train the actual agent. "
+How has the context of foundation models changed in the last few years with things like Dalle as opposed to just GPT-3?,Foundation models have become multimodal (translating between different sources of data) 
+When did foundation models become prevalent? What is the first reasonable example? ,BERT near 2019 was the first serious foundation model used across an entire group of tasks.
+What improvements in technology have allowed foundation models to emerge? ,"Improvement in: Hardware, architecture (transformers), and training data 
+This is analogous to OpenAI main research tasks (data, training, and tools), except tools is replaced by architectures "
+"According to the paper ""On the opportunities and Risks of Foundation Models"" by Bommasani et. Al., what are the key characteristics of foundation models? ","Emergence of behavior at scale, learned implicitly from data
+Homogenization: cross task applicability means foundation models replace other models across a range of domains. Provides power, but points of failure too "
+Explain the difference between precision and recall. ,"Precision: maximizes true positives out of all positives
+Recall: maximized true positives out of all actual things "
+How often should you re-train your machine learning model? ,"The speed at which your world changes determines how often you should retrain your model.
+Your system only works in the world where it was designed to work. "
+"What is k-fold cross validation, and when is it useful? ","You choose some integer k, and then leave out 1/k of the data and do that in k ways and train the model based on the data left in each subset, and then aggregate predictions of these models.
+This is useful when you don't want to do a direct random training/validation split, or you need to check your sensitivity to outliers."
+What are the two stages involved in training ChatGPT as opposed to original GPT-3 architecture?,"Original pretraining phase just gets it to babble text.
+Fine tuning stage with reinforcement learning gets it to be helpful as an assistant, rather than completing documents. "
+"What differentiates the GPT-3 architecture from the original ""Attention is all you need"" paper? 
+Why was Attention is all you need different? What task were they targeting?","GPT-3 is a decoder only transformer, and doesn't have the cross-attention which is present in the Attention is all you need paper. GPT-3 only masks out future tokens in the attention mechanism.
+Attention is all you need was targeting machine translation, so they had an encoder block to gather info in the original phrase, then the decoder has that context injected within each layer of the decoder."
+"In layer normalization in the transformer architecture, how many parameters are there per layer norm?
+Describe the mathematical steps in each forward pass of the layer norm. ","Just two, but for each location in the embedding (the bias and the scaling)
+Each token's embedding at this layer (ie a 1D vector of some size) has its mean and variance computed, and then scaled away indepenently. Then you scale and shift and scale by the overall layer norm parameters at each embedding location by the same amount for each token."
+"In a transformer, is the MLP applied to the tokens combined, or separately? ",Each token passes through the MLP separately. 
+"What can interspersing the fully connected layer (multi-layer perceptron or MLP) with the transformer attention mechanism, then repeating many times, be described as?
+What is a quick and pithy way to say it? ",Interspersing computation (MLP) and communication (attention) 
+What is the multi-head attention mechanism in a transformer analogous to in convolutional neural networks? ,"It is analogous to computing multiple images within each convolutional layer (the number of images in each layer is analogous to the number of heads).
+Doing this allows you to compute multiple kinds of things, to feed in as context for the following layer. "
+"In the GPT architecture, if the query, key, and value matrices have the last dimension (call it the column index) be the elements of the embedding, then why is the product query * transpose(keys) masked to be lower triangular, before it is multiplied by the value matrix? ","This is because the query * transpose(keys) matrix is tokens by tokens dimension, and the row index is the original token index. Masking this to be lower triangular means that the multiplication by the values matrix picks out only value vectors that are in the past or present of the token in question, and places them in the final row index associated with that token. "
+Why is the training process for GPT codex unique compared to GPT3 and so on?,"There is a ground truth success or failure for code with unit tests and an interpreter, unlike language which is up to debate "
+"How should the training process of the GPT-3 language model be understood, if we are able to know why it started to succeed on few shot learning compared to previous models. 
+How is this similar to Jacob Andreas' paper on agent models?","Can think of training process as:
+Outer loop of stochastic gradient descent is reducing loss to learn to encode multiple tasks
+Inner loop of a set of tasks in a context window is helping language model figure out which task is under test 
+This is similar to the idea that language models learn to figure out what agent they're modeling, in order to more accurately predict text. "
+What were the critical advances or demonstrated capabilities of the GPT-3 paper?,"In context learning success (zero shot or few shot) started to really improve (success rate vs number of examples shown)
+Observed growth in gap of zero shot and few shot learning success rates with more scale in model (success gap vs model size) "
+What is the key reason OpenAI switched focus to go all in on language models as opposed to other technologies? ,"Language sequence prediction allows for massive unsupervised learning via text prediction
+Local prediction is enough, since it still encourages learning the larger context "
+"Critical architectural components of ""Attention is all you need"" paper on transformers ","Positional representation
+Multihead attention to learn to encode different concepts 
+Masking for causality
+Non-linearities in the fully connected layer. "
+What was the timeline for plant development evolutionarily? ,"Algal scum appeared about 1.2 billion years ago on land, and bigger plants appeared around 450 million years ago."
+"Given the two mindsets or approaches to use when designing a model to fit some observed data in an experiment (minimize false negatives or false postives), when is it not appropriate to try to fit a model to the data (and instead you should try to minimize false positives)? ","When you know there is already extremely low probability of a false negative (you know there exists a line to fit roughly linear data. That's a boring question to ask and you don't get any information out of doing it). Instead you should be trying to see if you can produce the right line from scratch before looking at the data (minimizing false positives: this gives you the most information per experiment, where the experiment is now the model generation process.) "
+What does the Iswap gate do in a quantum circuit? ,"It is like swap (swaps 10 and 01) but it also adds an imaginary i in front of those two. 
+This i is crucial for not producing a trivial gate set."
+What does the Cook Levin theorem prove? ,"Any NP problem can be reduced in polynomial time to 3 Sat (the 3 satisfiability boolean problem). 
+It proceeds by showing that 
+any problem which can be verified in polynomial time on a turing machine can be written as a polynomially large chunk of circuits
+this circuit can be expanded in polynomial time to a satifiability problem in conjunctive normal form."
+"3 sat (the 3 satisfiability problem): is it or of a bunch of ands, or and of a bunch of ors?","It is the and of a bunch of 3 ors. 
+This is because any conjunction like (a or b) can be replaced with (a or z) and (b or bar(z)), and produce the same Sat problem (both are satisfiable at the same time, or not). In reality, if a is an ""or"" of two variables, and ""b"" is an or of 2 variables, then you can convert that ""or"" of 4 variables to an and of two sets of 3 variables. This is the reduction process. 
+This is called the conjunctive normal form (conjunctive means ""and"")."
+Learning with errors cryptosystem: what is the basic setup? ,"Have a vector of n objects over a ring mod q, and then do some manipulation on it and add some errors, then person with private key can subtract off something with similar errors, but someone without private key would just see some effectively random object mod q. "
+Why have many resources that were predicted to run out in the last 50 years not run out? What is the general bias or reasoning mistake that people make when thinking about this problem?,"People need to satisfy goals, not use specific things, though it is often assumed that they need a specific resource. 
+People switch between using different methods to satisfy the same goals (like we have switched from whale oil to gasoline and to natural gas). They switch before the thing actually runs out. This is why things don't run out. "
+What has the hard coral cover of the northern great barrier reef done over time quantitatively? Give percentages and times. ,"25% historically since 1990
+Bleaching event in 2016 reduced it to 15%, but now it is back to 35% in 2022
+25, 15, 35"
+What does the Australian marine organization suggest are key sources of vulnerability for the great barrier reef in the future? ,"Monoculture hard corals (the specific one that bounced back is relatively susceptible to wave damage and bleaching, apparently). 
+Cyclones
+Heat waves 
+Crown of thorns starfish (eats coral) "
+"What trends have occured over time with coral bleaching in the great barrier reef (GBR) in the past 30 years?
+Compare the yearly derivative (looks bad) to the cumulative total (looks good).","The northern great barrier reef had significant events in 2016-2017, and last few years. More than 60% bleaching. But central and southern had less effects. 
+The important thing is that in 2022, the hard coral cover has completely recovered in the northern reef."
+What is one significant cause of coral bleaching and a few significant consequences? ,"Elevated and sustained temperatures can cause it.  
+Effects are: can cause some mortality but is more likely to produce sub-lethal effects like reduced growth, reproductive output and larval settlement. "
+What does ‘percent hard coral cover’ mean in the context of evaluating the health of the great barrier reef? ,"This measure describes the proportion of the seafloor that is covered in live hard coral.
+It is measured by manta towing. 
+Hard coral cover greater than 50% is rare, because other things live there too."
+What are two general reasons why economic growth and ecological protection are compatible? ,"Development brings resources: The Kuznets curve of development and economic impact implies improvement over time (this curve states that as populations acquire more wealth, they have more willingness to care about the environment, and more ability to do something about it)
+Natural trends in efficiency: such as densification of cities and people, dematerialization of objects and resource use, and decarbonization of energy sources as we simply seek to become more resource efficient. "
+What is the theory of why the history of world Gross Domestic Product (GDP) growth is super-exponential? Why is this important? ,"More resources means faster technology growth which means faster resource production. It's not just that more resources allow faster resource production (which would be exponential). The growth rate at fixed resources is also increasing because of technology, and that's super-exponential. "
+"What are goals that are likely to be shared by any generated artificial general intelligence, as a corrolary or side effect of trying to achieve some other goal (convergent goals) ","1.a Acquire more cognition power 
+1.b Acquire more resources like energy 
+1.c Technology development to have control 
+2.a Goal-content integrity (seeking to prevent alteration or meddling with its internal goals, and changing its mind)
+2.b Self preservation"
+What are paths to artificial general intelligence suggested by Nick Bostrom in Superintelligence? ,"Algorithmic/evolutionary: This is the usual notion of a path to AGI through building computer programs from scratch. We can estimate the historical evolution rate to estimate what the required complexity is, and how close we are. However, this is hard to estimate. This method may sneak up on us
+Whole brain emulation: this seems feasible long term, but there are lots of technical hurdles, so it is unlikely to sneak up on us as a workable method.
+Enhancement: Brain machine interfaces (BMIs), or genetic selection of humans.
+Can think of the first two as: building a modern airplane (1) or trying to reproduce how biological birds fly (2). Then (3) is more weird, like building wings onto humans, or selecting humans who are the lightest and have the biggest arms."
+What are some malignant failure mechanisms of artificial general intelligence? ,"Perverse instantiation of goals, such as maximizing paperclip production
+Infrastructure grab or infrastructure profusion (gathering resources to make achieving some goal easier)
+Mind crime (simulating tortured minds, ie black mirror) "
+How long was alpha go zero trained? How many games must have been run in parallel to do this? ,"3 days, 5 million games
+Game speed: 0.4s per move, 200 moves per game, or around 1000 games per day. 
+So this implies around 1500 games being played in parallel somehow."
+"How does the prediction accuracy for human expert moves of the policy network of the alpha go zero (AGZ) algorithm differ from the prediction of networks trained on human expert play, with the same resources? Why is this interesting? ",AGZ has worse prediction accuracy on the human play than the supervised learning. But it wins more often. This suggest it's learning strategies that aren't contained in the human data. 
+"What are two mindsets or approaches to use when designing a model to fit some observed data in an experiment?
+How can these be characterized in analogy to experimental errors in statistics? ","Design model from first principles, and hope it matches. If so, because you didn't fine tune it, the probability of getting a false positive for the question ""is this the right description?"" (accidentally getting the right parameters) is very low. You minimized the chance of false positives. 
+Design a model that best fits the data, and then reverse engineer its behavior from there. This is minimizing false negatives for the question ""is this describable at all?"". You ensure the data is describable. "
+"What is syntactic illusion, what are two examples, and why is it interesting in a machine learning context? ","Syntactic illusion is when humans make a mistake and hear something that wasn't in the text.
+Two examples are:
+A sentence about ""how many animals did Moses take on the ark"", which makes no sense because Moses didn't do that
+A sentence with a negative in the middle in a secluded clause, that is gramatically incorrect because it needs a negative in the main part of the sentence, but the brain hears the negative gets ""heard"" outside the secluded clause. 
+Syntactic illusion seems to happen in both language models, and in humans (can tell based on looking at attention mechanism). This is interesting because it may say something about the structure of language and thought, rather than something specific about human deficiencies "
+In summary the main experimental steps of the T-cell challenge design are: ,"Introduce gene knockouts to ~70 genes in mice T cells.
+Take mice with Melanoma, and introduce these altered T-cells for a while
+Do single cell RNA sequencing for transcription amount 
+Process and cluster gene expression profiles on the single cell level."
+"What are the steps for gathering clusters of gene expression programs in the T-Cell population, after gathering and sequencing single cells? ","Remove tails of the distribution of total gene expression (correspond to damaged cells, and multiple cells)
+Normalize total expression
+Focus on highly variable genes and gene groups using prinicple component analysis (PCA)
+Do graph based clustering. "
+How do they perform gene knockout in the cancer T-Cell challenge at the Broad institute? ,Crispr is used to target and cause a double stranded break in the midst of a gene in the genome. Then they rely on mutations during the repair process to knock out that gene. They are not using Crispr for insertion. 
+What is the test animal for measuring T-Cell response to Tumors for the cancer T-cell challenge? ,Mice with Melanoma 
+What is one potentially surprising thing about the statistics of gene expression in measured gene expression maps?  What are two reasons it occurs? ,"There are a lot of 0s in the gene expression map. Of something like 20,000 genes, only a small subset are expressed in any active cell, and cause it to have that character
+In addition, there are technical problems that lead to mis-detection, and that leads to more 0s than expected on gene expression."
+How does single cell RNA sequencing work? ,"Water droplet are tagged with DNA barcodes. 
+You inject single cells into droplets and let them acquire the barcodes somehow
+Then you separate cells and do sequencing "
+What are the major milestones in animal evolutionary development over the past billion years? ,"950 million years ago - common ancestor
+650 m years ago - Hox genes
+600 m years ago - Chordates
+539 m years ago - Cambrian explosion"
+In what time period did most animals come into existence? When was this explosion? ,Most animals came around the time of the Cambrian explosion 539 million years ago.
+"What key development in animal genetics led to the ability to form many new kinds of multicellular life?
+When did it happen? ","Hox genes developed around 650 million years ago, leading to most land based life. They allow organization of the body structure and limbs, etc."
+What are some kinds of conceptaul flashcard prompts suggested by Andy Matuschak ,"Here are 5 types, written with the example of describing ""chicken stock"" as the content of the flashcard.
+Attributes and tendencies: What makes stock, stock? What’s always, sometimes, and never true of stock?
+Similarities and differences: Knowing what stock is requires knowing what relates and distinguishes it from other adjacent concepts.
+Parts and wholes: What are some examples of stocks? Are there important “sub-concepts” of stocks? Is “stock” a part of some broader category? Visualize a Venn diagram, even if the edges are fuzzy.
+Causes and effects: What does stock do? What causes it to do that? What doesn’t it do? When is it used?
+Significance and implications: Why does stock matter? What does it suggest? Make the concept personally meaningful.
+My additional interpretation:
+Visualize a venn diagram, with sub parts, and with similar nearby ven diagrams side to side. Above that is the ""significance"", and in front of it along another dimension is the cause/effect axis."
+What are some broad types of flashcard prompts suggested by Andy Matuschak ,"Facts
+Procedural (make you remember a procedure as steps)
+Saliency hints (try to get you to recall something by not quite explicitly saying it)
+Conceptual questions
+My hint: think of these as similar to the types of lists/storage media in python. The facts are a set (unordered). The procedural is like a list. The saliency hints and conceptual questions are like dictionaries? (This last one is a bit loose, but saliency hints are like pointers.) "
+What experimental evidence is there to support the programmatic notion of complexity of general intelligence? ,It was demonstrated that rewiring of neurons is possible to achieve visual sight after severing the optic nerve in ferrets. This suggests that the algorithm for learning and development is versatile to develop intelligent behavior. 
+What is the evidence against the programmatic complexity notion of the difficulty of artificial general intelligence? ,"Physical specialization may be large: Many subsets of the brain seem specialized and developed and hardwired by evolution. It might be that much more is necessary for human behavior than the difference in genetics from humans to chimps (ie parts of chimps brains might be necessay). 
+Societal encoding of structure (so we forgot to include this measure in the complexity): Many human societies have similar language and social structures, which suggest evolutionary optimization. "
+What did the paper Camburu 2018 demonstrate about language models?,"They demonstrate adding annotation of intents and agent information to training data for a transformer, and how this helps the model be able to explain itself.
+Specifically, the model learns to explain/annotate whether two statements are related by implication, or neutral, or contradictory, for example. "
+"What are two possible reasons why language models sometimes fail to correctly predict text, probably through the mechanism of failing to encode the emotions and intent of the agent speaking? ","The training data doesn't include sufficient annotation of the agent type. Solution: add explicit annotation in training data about who an agent is
+Limitations of the context window being too short "
+What are two examples of metascience entrepeneurs that already exist? ,"The creator of Arxiv, who was a physicist and then transitioned full time to creating arxiv. 
+The creators of focused research organizations (FROs). "
+"In the Alphacode program, how was a diversity of problem solutions generated from the initial problem statement? (given that the architecture is just a transformer) ","1. Use higher temperature on transformer output
+2. Condition on random metadata as a header (like statements of the problem difficulty, and problem tags, like solution methods that might be used)"
+"For cancer immunotherapy with checkpoint blockade, what has the average life expectancy of late stage melanoma gone from, between around 2005 and now?","It was around a few months then, to now around 6 years on average."
+"For cancer immunotherapy with checkpoint blockade, what is the fraction of patients in early ipilimumab trials that responded? ",around 20%
+What was the incentive for the first company to offer credit card rewards? ,"They can capture more customers by offering some incentive, then make more profits, then return that to the customers. 
+It doesn't have to be net zero in that case "
+How are credit card rewards an example of a zero sum game? ,"If every company offers them, then the entire market doesn't change, the net profits are the same, and the money given out in the rewards must come at the expense of customers who are not gathering rewareds "
+What are the two things that differentiate powder based 3D printing from extrusion?,"Gradients of materials is more easy.
+Can build more complicated physical structures. "
+What are the 4 types of T cell states relevant to cancer immunotherapy?,"Progenitor
+Effector (killing)
+Dividing
+Exhausted (this is the bad one, that we want to minimize). "
+What are the two major categories of cancer immunotherapy currently? ,"Car T cell therapy
+Checkpoint therapies (that re-establish the ability of the immune system to recognize certain tumor atoms) "
+How has the average CD index changed over time? Why might this not matter? ,"It has gone down from around 0.25 to 0.5, down to 0.0. 
+This might not matter because the absolute number of highly disruptive papers is still decently large (similar size)."
+How has the fraction of highly disruptive papers (CD index above 0.75) in different fields changed over time?,"It is now heavier on the technology and computer fields, and less heavy on the life, physical, and social sciences. "
+How has the fraction of highly disruptive papers (CD index above 0.75) changed since 1950?,"It has gone way down. 
+However, the absolute number of highly disruptive papers has stayed similar "
+What is the CD index for measuring disruptiveness vs consolidation in scientific papers (using citations)? ,"It is basically a ratio of how many future citing papers (future papers are those that cite the paper under question (called the focal paper), or cite papers that were cited by the papers under question) cite only focal, both focal and predecessor, or just predecessor papers. 
+Disruptive is only citing focal paper, not predecessors (+1)
+Consolidating is both (-1)
+If they cite only previous papers, not focal, it is just not important (0) (however, this does drag the overall metric to 0 due to averaging, so that most papers are clustered at 0 unless they are super important)
+The final metric is average of all of these over citing papers."
+How is the metric of disruptive papers compared to consolidating papers similar to one of Nielsen's ideas about science processes? ,"It is related to Nielsen's idea of researchers either being a problem creator or problem solver. Problem creators would write disruptive papers, while problem solvers would write consolidating papers. "
+"In brief, what did the paper ""Park 2023"" show about scientific discovery?","It showed that disruptive papers are becoming less common over time, as measured by a specific metric "
+What differentiates powder based 3D printing from extrusion in terms of physical construction?,"You can build more complicated structures because the bed of powder supports the device as it grows. In contrast, with extrusion the device itself must support itself. "
+What is one benefit of powder based 3D printing and melting compared to extrusion from a materials science perspective?,"It's potentially easier to dope the composition of the material (like add ceramic dopants by coating 40 micron particles with ceramics, then melting them).
+You can do gradients of material somewhat more easily"
+"In a 3D metal printer, what is the wavelength of the laser? Does this matter?","1200 nm, and no it does not matter too much. It's just a wavelength that can get high power and has good absorption"
+How does a 3D metals printer work?,"Metal powder layer, then lasers melt it locally, then spread more powder, then repeat "
+What are the main metrics for how good a material is in  metals material engineering? ,"Tensile strength
+Hardness (resistance to scratching)
+Corrosion resistance "
+What are the two main benefits of atomic quantum gas experiments for understanding physics? ,Isolation and tunability 
+What is the concept of implicit search in large language models? ,It is the idea that transformer somehow implement a hidden search algorithm to find concepts buried in their network. 
+"For t-sne reconstruction, what is the cost function which is minimized to best reconstruct the distribution of the original datapoints in a lower dimensional space? ","The cost function used is the Kulback Liebler divergence from the new distribution Q to the old distribution P of the similarities between datapoints (P has a gaussian similarity metric based on distance (symmetrized from the measurement of i to j and from j to i), and Q has the t-distributed similarity metric (also symmetrized from i to j and from j to i)) "
+Sketch a quick proof of why the Kulback Liebler divergence is always positive. ,"To prove, note that the KL divergence is sum_i p_i (- log (q_i / p_i)).
+- log(x) is always greater than or equal to 1 - x. 
+Replace the log by this, and then perform the sum, which results in 0. So KL divergence is greater than 0."
+"Regardless of the phrasing of the definition of Kulback Liebler divergence:
+How should one remember, in the resulting formula, which distribution is included in the term which has the usual Shannon entropy form, and which distribution is only present in the cross entropy term? ","The distribution which you believe to be the ""correct"" one, in some sense, is the one written in the Shannon form. The one you are using instead, is the cross entropy term. Thus the KL divergence measures the surprise you would experience if you expected the non-correct distribution, when the correct one was the real distriubtion. "
+"How to remember the phrasing of the definition of Kulback Liebler divergence?
+The Kulback Liebler divergence is usually phrased as ""from distribution Q to distribution P"". 
+How should one remember, in the resulting formula, which distribution is included in the term which has the usual Shannon entropy form, and which distribution is only present in the cross entropy term? ","The distribution you are comparing ""to"" should be thought of as the ground truth distribution you really believe is correct. Therefore you are measuring the divergence from the other thing, to that ground truth. 
+On wikipedia: ""Usually P represents the data, the observations, or a measured probability distribution. Distribution Q represents instead a theory, a model, a description or an approximation of P."" "
+"23% of solid waste generated in the US is paper. How much of it is recycled each year?
+Of the total waste generated, how much ends up in landfills?","Roughly half of paper products are recycled. 
+Roughly half of all waste ends up in landfills. "
+"Of solid waste generated in the US each year, how much is paper, food, and plastic? ","23% paper, 20% food, 10% plastic"
+How many landfills are there in the united states? ,There are around 2000 landfills.
+How does the t-sne reconstruction process intentionally differ from the original measurement of the distribution of points in the high dimensional space? ,"The final setup uses a similarity metric based on distance which is a Laplacian rather than a Gaussian.  (I think this is the t-distribution part of the name of t-sne.)
+This is crucial, because it is what allows us to move all the very far away points into closer proximity, and the close points into more even distribution; it moves everything into the middle region. This makes it easier to see everything on one plot.
+-----
+As a reminder, the overal goal is that it tries to reproduce the nearest neighbor distribution entropy for each point, but it does so with a new probability metric. "
+"In t-sne, what is the original measurement that controls the final distribution of points? ","The original measurement is a similarity metric from point i to point j. 
+This is the probability that point i would pick point j as it's nearest neighbor based on their relative distance plugged into a Gaussian with some adjusted Gaussian width. 
+For each point i, the gaussian width is adjusted so that each point's nearest neighbor distribution has the same entropy distribution as all the other points. "
+What does t-sne stand for in machine learning? ,t-distributed stochastic neighbor embedding 
+What year was Obamacare passed? ,2010
+What are two phenomena and geographical areas in the United States where risk of damage due to climate change exhibits an expanding bulls eye effect? ,"Florida and east coast and people in hurricane path 
+West coast and homes in severe wildfire risk areas 
+Both are up 7x from 70 years ago until now"
+"What is the solution to deal with the large randomness and local minima in strategy in poker (to bet randomly to only lose half the time, rather than more than half), as a reinforcement learning problem? ",Solution: have a solid opponent pool that prevents overfitting to one policy and makes sure to explore the space of actions enough. This is effectively regularization. 
+Python file access commands for opening a file and writing to it ,"For writing:
+f = open(""hello.txt"", ""a"")  # a stands for append
+f.write(""hi"")  # appends to line
+f.close()
+-----
+If you do f = open(""hello.txt"", ""w"") then write will overwrite things. "
+What is the practical difference between water soluble and fat soluble vitamins? ,"Water soluble: These have to be replenished often, and are small molecules and simple.
+Fat soluble: These can be stored in body long term, and are more complex molecules.
+------
+Water-soluble vitamins are soluble in water and are not stored in the body to any significant extent. They must be obtained from the diet on a regular basis. Examples of water-soluble vitamins include vitamin C and the B vitamins. These vitamins are typically small molecules with a simple structure.
+Fat-soluble vitamins are soluble in fat and are stored in the body's fat tissues and liver. Examples of fat-soluble vitamins include vitamins A, D, E, and K. These vitamins have a more complex structure, and they are typically larger molecules than water-soluble vitamins. "
+Major burdens on health: what are a few of the preventable major causes of excess deaths ,"Obesity: 5 million
+Air polution: 7 million
+Tobacco use: 8 million
+(out of around 50 million excess deaths)"
+What fraction of energy use by each person (on average) comes from various sources? ,"Coal 30%
+Oil 30%
+Gas 20%
+Nuclear, wind, solar, hydro - remaining 20%"
+"The Patient Protection and Affordable Care Act
+What two broad categories can the components of the bill be categorized as? ","Expansion of the healthcare system
+Requriements on individuals and companies "
+"The Patient Protection and Affordable Care Act, also known as Obamacare
+Requirements or prohibitions contained in the bill ","Individual mandate for health insurance
+Prohibition of insurance companies denying coverage or charging more based on pre-existing conditions
+Requiring insurance companies to cover essential health benefits "
+"The Patient Protection and Affordable Care Act, also known as Obamacare
+Main expansions of the healthcare system ","Healthcare marketplaces for individuals and small businesses
+Expansion of Medicaid "
+Compare and the costs and benefits of wind and solar to nuclear energy ,"Cost: The upfront cost of building wind and solar facilities is generally lower than the cost of building a nuclear power plant. However, the cost of generating electricity from nuclear energy is often lower than the cost of generating electricity from wind or solar, especially over the long term, due to the higher capacity factor (the amount of electricity a power plant generates compared to its theoretical maximum output) of nuclear plants. Also land use is much higher for wind and solar. 
+Reliability: Nuclear power plants have a very high capacity factor and can operate continuously for extended periods of time, making them a reliable source of electricity. In contrast, the output of wind and solar facilities is dependent on weather conditions, which can be variable.
+Further concerns:
+Environmental impact of nuclear mining and disposal. 
+Safety of nuclear plants "
+Types of creativity according to Nielsen ,"Problem solver vs problem creator.
+A problem solver is someone who is good at solving puzzles, or math, or building devices to accomplish a goal.
+A problem creator is someone who thinks deeply about the field and about the problems it is encountering, and the unstated assumptions or gaps in knowledge, and proposes research questions to move the field toward a better understanding. Then problem solvers tackles those research questions.
+Problem creators are much more rare, and probably do a more difficult task. "
+Eric Reis's book: The lean startup - main ideas ,"Build minimum viable product: goal is to start answering questions as fast as possible and use small batch production to quickly feedback and tune
+Tune the engine of growth by measuring the right metrics (not overall growth rate, but  measure improvements to acquisition, retention, etc. Change in slope) "
+What was the sequence of events leading to failure of power in texas in 2021 with a large ice storm?,"1. Wind turbine icing prevented wind generation of electricity
+2. The natural gas pipeline compressors were electric, and failed because wind power was gone.
+3. Utility companies that generated electricity using natural gas were shut down to leave as much natural gas as possible for houses for people to heat their own homes.
+4. The cooling pipes in the electricity generation plants of the utility companies froze because they were not running, and were not sufficiently insulated. Then these companies could not turn electricity back on again."
+What are the energy generation systems involved in the failure of power in texas in 2021?,"Wind turbines, 
+natural gas pipelines, 
+electricty generators of utility companies, where were running on natural gas "
+"Where was jim Allison's first, second, and third job located? ","Smithville texas, berkeley, then Sloan Kettering in new york. "
+What happened to the approval process for cancer drugs at the FDA around 2005 that didn't happen in other areas of disease?,"The FDA decided to identify severely debilitating and life threatening diseases as requiring a different risk benefit analysis, and different approval process.
+This led to an over representation of cancer in pharmaceutical investment, because only oncology allowed this cost benefit at the FDA, and other types of treatment did not "
+"What does the CTLA-4 receptor do on T cells in the human immune system?
+What do tumors do to it?","It is a brake for the immune system when it is engaged. It stops T cells from being so active.
+Tumors engage the CTLA-4 receptor to turn off the immune response, and survive better."
+What is the hardest thing to do in industry drug development when choosing what to do about a project? ,"The hardest thing as a leader in drug discovery is to not kill the important things, even when they look hopeless. It’s easy to say no and kill things but, then to be left with no spectacular breakthroughs that succeed in the long term "
+What are the phases of clinical trials for drug development? ,"1 - this phase tests safety and dosage (involves 15-50 people)
+2 - this phase test efficacy for a specific target disease, and side effects (involves less than 100 people)
+3 - this phase tests the comparison between the new treatment, and existing therapeutics and drugs on the market (involves hundreds of people, and takes years usually)"
+In the book by Eric Reis - The lean startup - what are the different engines of growth? ,"Sticky engine (when it is hard for someone to change away from your product). Drawback is it is hard for the company to tune. The goal of the company is to maximize retention of customers.
+Viral engine. This engine relies on the number of other customers that each person infects. The company wants to increase this infection rate. 
+Paid customer acquisition. This engine has the company pay to attract more customers. In the long term, this enginer relies on costs of acquisition being less than revenue generated from each customer. "
+Eric Reis - The lean startup - key assumptions to be validated for every startup ,"Growth hypothesis
+Value hypothesis "
+"Texas sequence of events leading to power failure: What was second failure point that could have been prevented, between natural gas pipelines and homes and power generators? ","Major power generators which use natural gas should not have been taken offline.
+Or if they were offline, the water cooling pipes should not have been stopped from circulating so that they froze. "
+What was Jim allisons first big discovery? ,He found the T cell receptor molecule in the immune system 
+What was the change in clinical trial benchmark necessary for the drug ipilimumab to be approved by the FDA? ,"They were going to shut down clinical trials because the benchmark for chemotherapy drugs was a certain amount of tumor size reduction after 12 weeks (around 30 percent). But ipilimumab was a different mechanism than chemotherapy drugs, and they needed to instead do long term survival as the benchmark."
+"Texas sequence of events leading to power failure: What was first failure point that could have been prevented, between wind turbines and natural gas pipelines? ","The natural gas pipeline compressors were all electric, and so they failed when electricity failed. Some of these compressors should have been able to be run with other power sources, like natural gas. "
+When was the last single common ancester of all animals walking on earth? When did Chordates split off? ,"Single common ancestor around 950 million years ago
+Chordates split off 600 million years ago with Echinoderms"
+"Applications of machine learning in physics: 
+What are some examples of generative models applied to science? ","Generating sampling distributions in quantum field theory
+Generate molecular dynamics and states "
+Expectation maximization algorithm - how can this be viewed as an optimization of the free energy? ,"Define a modified free energy F_q = minus slightly different log likelihood with q(z) distribution over latent variables z for each observation x, plus the entropy of q(z) for each x. 
+You can prove that this modified free energy bounds the true free energy of the model from above, where the true free energy is just the prediction for each datapoint x by taking is probability over z as an intermediate step. 
+The expectation maximization algorithm is iteratively updating q(z) for each x, and then optimizing the model parameters theta for fixed q(z) over all x. Then at the end for a new x, you know what q(z) is and you then can predict the observation. "
+Expectation maximization algorithm - what is it most similar to among other clustering algorithms? ,K means clustering 
+"What modern encryption system is already an example of homomorphic computing?
+What future technology might be as well? ","RSA
+Quantum homomorphic computing "
+"What is a more general word for a system that lets you encrypt the input to a computation, let someone else compute on it while it remains encrypted, then return you the encrypted result? ",Homomorphic computing 
+"RSA encryption details: 
+What is the order of a multiplicative ring of size p with p prime?
+What about a ring mod N with N=p*q and p and q prime? ",p-1 and (p-1)*(q-1) apparently.
+"RSA encryption details: 
+What is the order of a multiplicative ring? ",A number which collapses the ring upon exponentiation by that number 
+"RSA encryption why does it work, in 1 sentence?","The point is someone can know N (the mod) and e (the encryptor) but not know the power required to give unity upon exponentiation, so they can't find d (the decryptor power).  
+In short, it's a one way function. "
+"RSA encryption: how does it work?
+Mechanics of encryption/decryption without proof: ","1. Choose p and q large primes
+	2. N=p*q is a large number which is not divisible by most things
+	6. If we take any message M and exponentiate it by some known number phi(N) times it will come back to itself (mod N).
+	7. Now we choose two integers e and d which are multiplicative inverses mod phi(N), so that if we exponentiate a message M^(e*d), then we know if we take M^(e*d) mod N it must be M, and we're done."
+What happens to the determinant of the product of two matrices ,It's the product of determinants. 
+Determinant algorithm complexity ,It's n cubed. You add and subtract rows to each other row until it's upper diagonal. Because that doesn't change the determinant it's the same determinant at end and that's the product of diagonals. 
+Formula for the inverse of a matrix using the determinant ,"The inverse formula uses the laplace form of the matrix determinant. One needs the determinants of the minors and then places these in the entries of the matrix inverse in a certain way with factors of -1 as well, and divides by the determinant."
+What are two formulas to write the determinant of a square matrix? ,"Laplace and Leibniz forms:Leibniz form is product over a_i,sigma_i with a new sigma for each i, and sign of permutation, summed over permutations Laplace form is sum over a_in times minus one to i plus j times determinant of minor "
+"Jacob Andreas 2022: ""Language Models as Agent Models""
+The example: Training to predict online reviews on Amazon
+What did they do to try to test the agent modeling hypothesis in the structure of the network?","There is a specific neuron that encodes sentiment accurately, When training without any knowledge of the review
+It accurately predicts review score
+You can hold the neuron fixed, and change the sentiment of the output "
+"Jacob Andreas 2022: ""Language Models as Agent Models""
+The example: Training to predict online reviews on Amazon
+Why is this so great of an example?","This is a good example because the goals and beliefs of authors differ wildly, but otherwise content is rather similar "
+"Jacob Andreas 2022: ""Language Models as Agent Models""
+For the example given: Providing factually irrelevant context about the type of person, what was shown? What was the interpretation?","Result: prompting agent information without any factual relevance can affect accuracy on other factual questions. The example given was ""can coughing cause heart attacks?"" Conditioning on an agent that is a professor and wants to be truthful is better than conditioning on someone who loves alternative medicine. 
+Conclusion: the model is inferring the agent beliefs and knowledge 
+---------
+Bold interpretation is that this implies that the LM has learned to encode truth, but has to be conditioned to give an agent who tells the truth: 
+It is possible... “that LMs do distinguish true answers from false ones; and, in a document context indicating that an author’s goal is to inform, could generate truthful answers preferentially.” "
+"Jacob Andreas 2022: ""Language Models as Agent Models""
+For example of explicit training on a toy model of 3 populations to show internal agent coherence and population decoherence, what are the main outcomes, and interpretation?","Without context, next output is a random sample of the 3 populations 
+With conditioning on some beliefs, you find outputs broadly follow the conditioned population behavior 
+-------
+Interpretation: “[The LM] can infer author identity, and when properly conditioned can imitate individual authors. The LM is not an A-type agent, or an O-type one, but can be straightforwardly made to act like one given the right hidden state.”"
+"Jacob Andreas 2022: ""Language Models as Agent Models""
+What are the 3 examples given in the paper to show how LMs construct agent models?","Explicit training of a toy model of 3 population
+Prompt engineering: professor smith vs someone who loves alternative medicine
+Training to predict online reviews on Amazon"
+"Jacob Andreas 2022: ""Language Models as Agent Models""
+What are possible solutions to improve the agent modeling capabilities of language models","1. Expand the context size input to transformers to not be limited, so that the history of the conversation or words of an agent can be inferred. 
+2. Use a scratch pad for encoding information, and feed it to the model along with a new prompt when necessary."
+"Jacob Andreas 2022: ""Language Models as Agent Models""
+What is the mechanics (training data and training process) by which language models construct agent models?","How this inference of beliefs and conditioning on beliefs selected for during training?
+LMs are trained on populations of internally coherent agents, but who don’t necessarily share the same desires and beliefs. 
+In order to more accurately predict text, it’s useful to figure out what type of agent you are working with. "
+"Jacob Andreas 2022: ""Language Models as Agent Models""
+What is the significance of the main claim that language models construct belief representations?","This lens can help predict why something fails, and how to fix it "
+"Jacob Andreas 2022: ""Language Models as Agent Models""
+What is the main claim?","Main claim is language models are pushed to do two things in order to make accurate predictions (beyond grammar)
+Infer the beliefs and desires of an agent in a prompt
+Use that inference to predict marginal tokens "
+"Vision of metascience by Nielsen and Qiu:
+What are specific suggestions for changing the social processes where science is done? ","Grant funding orgs
+Fund for variance of outcomes
+Fund high risk by having a guaranteed fraction of failures rather than successes as the metric for a grant institution 
+Funding individuals
+Fund fellowships to change disciplines for scientists, to inject disciplinary liquidity 
+Fund stable professorships for under 25 people to encourage them to be bold 
+Tenure insurance"
+"Vision of metascience by Nielsen and Qiu:
+What would success look like? ","Fields, Organizations, and Culture
+----
+10x the rate of new fields being created
+Have garage band research organizations grow to worldwide pre-eminence (indicates some new method works, and is allowed within the system)
+Large cultural shifts in what is acceptable for a scientist to do"
+"Vision of metascience by Nielsen and Qiu:
+What are aspects of the scientific system that can change? ","institutional practices (like funding), 
+incentives, 
+norms "
+"Vision of metascience by Nielsen and Qiu:
+What is the main point of the article? ",They argue it is necessary to increase the diversity of social processes where people do science in order to systematically find the most productive methods of figuring things out. 
+What is the functional form of the Boltzmann machine loss function as derived from maximization of log likelihood of data ,"Training method: Maximize <log (p_model(x))>_data for x from data.
+This turns into -<E_data> - log(Z_model)
+Then take derivative to get -dE_data +dE_model.
+So during training, to increase the likelihood of the model predicting data, change the model parameters which increase the model energy (evaluated everywhere, including AWAY from the training data), compared to increasing the energy of the data.
+This reduces the probability of not-seen data compared to seen data "
+What are the two approaches to regularization in ML? ,"1. Add noise to the learning process so that specific solutions aren't overfit. Examples of this are the dropout method and batchnorm method in neural network training. 
+2. Penalize the size of parameters used in the model, or the number of parameters used. This can be done using the cost function in gradient descent, for example."
+What is the quantum trotterization algorithm for time evolution? ,"It is a mathematical formula that lets you exponentiate a sum of matrices which do not necessarily commute, but exponentiating small fractions of them many times in repetition. This is useful for Hamiltonian time evolution in quantum mechanics, which often requires exponentiating time multiplied by a hamiltonian matrix which has many components that do not commute. "
+What is a challenge for neuralink using RL on neuronal output from the brain? ,"It is not stable over time (on the brain side).
+Hardware can change or decay too. "
+"What is an autogyro, and how is it different from a helicopter? ","Air moves up through blades rather than down.
+Isn't powered.
+Lift is up and back from the rotating blades, so you need a front propellor for steady state. 
+For helicopter, lift and thrust are forward and sufficient to cancel drag from airframe. "
+What are examples of multimodal neurons from OpenAI's CLIP model?,"Emotions and faces
+Physical regions
+People "
+What is useful about knowing what neurons are multimodal in a model (openAI microscope and CLIP)? ,"Interpretability of knowledge encoding.
+You can see what the model associates together: for example, you can observe what other topics activate the ""donald trump"" neuron, and by how much. This is the association between concepts encoded in the network. "
+How did OpenAI identify multimodal neurons ,"Label concepts, then see which neurons activate most strongly when concept is presented in multiple modalities. "
+What is a multimodal neuron in a neural net? ,"Something that encodes a concept from multiple modalities.
+Example: a spider man neuron that firest for words, drawings, movie shots, etc "
+"How is alphacode a realistic attempt to solve the main problems in RL? What does it do that is important. 
+Conversely, how is it probably not a big step forward (just more compute, but not a smart new solution)? ","It tries to address complex analytic reasoning with natural language input. 
+However, it seems to just be massive sample size and filtering solution, rather than reasoning. 
+------------
+Comment on 1: Still has all the problems of transformers: doesn't address making the model agentic, or learning over time from few examples with feedback, or memory, or encoding logic.
+Comment on 2: it doesn't seem to operate like a human brain does. Massive sampling to succeed isn't efficient encoding of a sample solution. There has to be a better way.  
+Seems like success rate scales exponentially badly with problem difficulty."
+"What is the scary part of the alpha-code success rate scaling with sample size?
+How does this compare to other problems in computer science? ","It scales logarithmically with the number of potential solutions generated. 
+But larger models have a better scaling coefficient at least. 
+-----
+Interpretation: the success rate is a proxy for the hardness of a problem (20% success vs 40% success means roughly 2x harder)
+With this interpretation, the AlphaCode success rate scales exponentially badly with the ""hardness"" of the problem."
+How does alphacode success compare to basic transformer-based submissions? ,"30% success vs single digits success. 
+Main reason: sample filtering.
+--------
+CAUTION; might just be massive solution sampling? (log scaling with sample number)"
+Alphacode what are the two main advancements that allow human-level success? ,"Higher compute (large dataset of codebase problems of similar structure)
+Population filtering of samples. "
+Alphacode what is the architecture? ,"Transformer to generate sample submissions
+Population clustering and selection to generate 10 actual submissions (crucial)"
+What is the Lotka volterra model of population dynamics? ,"The growth rate of each species is simply a constant times the population density, but at second order there are also interactions between the growth rate of a single species and the density of other species "
+What is the most basic model of how natural environments determine major animal types in a given biome? ,"The prevalence of water and the average temperature determine which plants can live in the biome (ie grasslands have some water and are warm, while tundra has water but is cold, and desert has no water but is warm). Those plants which can exist in a biome determine what types of large animals can exist as well. "
+What is persistent contrastive divergence compared to constrastive divergence? ,"As you do overall gradient descent on a Boltzmann machine, you need to resample the gradient w.r.t. parameters in E(x). 
+For this, you need to continually re-estimate the average energy of the model.
+CD does this with MC estimation.
+PCD uses the MC end value of the previous CD iteration in SGD to seed the next MC distribution (and so it will not rely on data, and can diverge further). "
+How do we get the expectation value of energy of data for MLE (maximum likelihood estimation) of a boltzmann machine? ,"The energy E(x) is well defined. We just need to sample all its terms (integrate over hidden nodes x = {h,v}).
+To do this, write down the terms in the energy, and some of them will couple to the hidden layer activations. 
+Then just sample the hidden layer activations given the visible layer values (set by the data). The probability distributions for the hidden nodes are of a simple functional form (if it is a restricted Boltzmann machine), and so doing this sum over the hidden node probability does not require calculating the full partition function. "
+What are the steps involved in contrastive divergence? ,"We want to sample the energy of a Boltzmann machine model (on average) for computing a gradient in MLE.
+To do so, we start with a real sample in the visible layer, get probability sample of hidden layer, then go back and forth, until we converge to something representative of the model (MC estimate). "
+What is constrastive divergence used for? ,"Measuring samples from a Boltzmann machine (which is necessary when doing gradient descent on the Boltzmann machine parameters, like the parameters of its energy distribution, in order to most closely match the generated distribution to some observed data). "
+"What does gradient descent look like for energy based models? 
+What is the physical intuition in terms of energy? ","Raise the energy of non-data, lower the energy of data.
+----------------------
+We have a model with some form E(x) for a given data sample at configuration x.
+We want to minimize -MLE = -log(model stated probability of data) = <E(x)>_data_x + log(Z)
+Derivative of this is d <E>_data/d theta - d <E>_model/d theta. We want this to be negative, so we want to raise the model energy on average, compared to the data energy on average. 
+This results in a new boltzmann distribution with real data in the minima, likely to be sampled. "
+Why are Boltzmann machines especially powerful in physics applications? when interpreted as energy based models ,"Can encode arbitrary effective interactions 
+-----
+between visible nodes if the hidden nodes have a complicated distribution function. In the sense that the effective energy of the active layer (integrating out the hidden layer) is described however you want, given the energy of the hidden node vs it's value. You can learn what order of interactions are necessary rather than hard coding it. "
+Clean code: what are the rules for a function input and output? ,"Should have 1 or 2 inputs only (use a class if necessary).
+Shouldn't alter things in place. Should return an altered object."
+"How to simplify input arguments to functions to have one or two arguments, not many? ","Combine objects into natural classes.
+----
+Example
+Circle makeCircle(double x, double y, double radius);
+Circle makeCircle(Point center, double radius); "
+How to simplify input arguments to functions to prevent forgetting input format? ,"Add hints in function name, of what type of object it is, and order of them "
+"What is the wavenet architecture in the wavenet paper, as compared to Bengio 2003 paper which used embedding for predicting the next character?","The wavenet paper adds heirarchy in the network, and starts to approach the transformer type network. It combines bigrams, then combines those, then those. The result is a 3 layer network which compresses 8 characters into one object then reverse embeds. In principle this uses information more efficiently."
+Karpathy suggestion for workflow on building deep networks: how to debug it's doing what you want. Also what project did I do this on? ,"Make a small example network with fake input.
+Push data through and check shape throughout the process.
+Then paste into final implementation. I did this for alpha go zero network "
+What are two major problems with existing LLMs like ChatGPT? ,"Hallucination (logic): ""Tell me why X is true"" it won't question if its true. 
+Memory (long term): We can't yet build a personalized assistant that has long term memory of information it has told you specifically "
+"Avalon architecture main overarching goal, and key design choices to achieve this ","Create environment sufficiently similar to human development, to enable a general agent with cross task learning.
+Key ideas:
+Fix ground truth reward
+Fix mechanics
+Only change intermediate structure of challenges "
+Avalon architecture: how is the timing of the environment different from most RL tasks like Stratego and Go? ,High speed and continuous environment 
+"Why did the avalon architecture ONLY change the structure of intermediate challenges, not the game mechanics or global reward? ","To encourage general learning and cross task learning. 
+Sub skills should transfer "
+Arguments against current large language models being sentient (they lack X): What is X? ,"Sensory perception, embodiment, recurrent processing, world model, global workspace, unified agency, biology.
+My strongest ones:
+World model, recurrent processing, unified agency "
+"Are LLMs sentient (Chalmers talk). 
+Arguments for current systems being sentient (they have X): ","Self-report of sentience, conversational ability, domain general knowledge "
+Biggest overarching challenge in RL ,"Designing an agent with unsupervised general learning capability in many environments.
+Specifics:
+It needs to achieve few shot learning
+It probably needs to incorporate a natural language interface (that is, somehow combine with language models) "
+How is batch norm an example of solving a key problem in design in neural networks ,"Robustness to initialization effects on training.
+More generally, we need robust methods of regularization that don't require fine tuning.
+Initialization and regularization "
+Is the stratego algorithm similar to AGZ? ,"No. Stratego algorithm is model free, which is surprising. There is no explicit model of the environment. No planning. "
+"In the stratego paper, what is the regularized nash dynamics algorithm most similar to in other reinforcement learning algorithms? ","Proximal policy optimization, because it penalizes deviating too far from the original policy "
+What is the regularized nash dynamics algorithm used in the stratego paper by Deepmind? ,"Uses policy gradient and altered reward function (similar to PPO) to ensure convergence to some local minimum.
+Checkpoints policy, then uses altered reward function which penalizes deviating from that policy too much (similar to PPO clip, but continuous), and has a guaranteed local optimum.
+Repeat many times, converges to global optimum strategy. "
+What differentiates the challenges of Stratego from poker and Go? ,"Stratego has way bigger state space and initial state space (think poker hand size vs stratego ""hand"" size) and hidden information. 
+Slow, sequential reasoning "
+Historical example of intelligence augmentation (think hundreds of years) ,"Language
+Writing
+Descartes and algebraic representation of geometry "
+Examples of AI-based intelligence augmentation from Nielsen essay ,"Generative models with a 1D tuning axis for complex concepts
+Emotions in faces
+Boldness in fonts."
+What is the vanilla policy gradient theorem with baseline (the baseline part) and why is it good? ,"The baseline term provides a generalization of the VPG (vanilla policy gradient) formula that reduces variance in the update strength during gradient descent.
+In the VPG formula, you can change the Q function estimate q to q+c for any constant c that doesn't depend on the action (such as a value function), and this can reduce variance.  
+------------------------------
+why? 
+You can subtract the constant c from it is multiplied by the policy, and summed over actions. Then you can subtract c because the sum over actions of gradient of the policy pi is 0 (pi sums to 1)
+It helps because the variance of the product of two random variables is larger in general if one of them has a large mean, and smallest if they have 0 mean for both of them."
+What is the policy gradient theorem formula? ,"gradient of value = expectation over states and actions of (grad log[pi(a|s)]) * q(s,a). 
+The log comes about because we had sum_actions grad pi(a|s), but to put it into expectation over actions, we get the log. "
+"What will this do?
+x = np.random.multinomial(n=1, pvals=[1/6, 1/6, 1/6, 1/6, 1/6, 1/6])","Returns a sample vector from the multinomial distribution: Chooses 1 sample, and returns a vector with 1 hot encoding of result. If n=10, it will have 10 samples (vector will sum to 10)Binomial distribution is the same thing with 2 elements in pvals, rather than 6."
+How can I draw samples from a normal distribution with numpy? ,"Normal distribution: x = np.random.normal(loc=1, scale=2, size=(2, 3))"
+np.random.permutation(arr) ,"returns a random permutation (is not in place operation, like shuffle is) "
+What are numpy filter arrays? ,They are boolean arrays which let you select subsets of data from another array. There is one Boolean value for each index in the other array. Then you run arr[filter_arr] to take the subset of arr with a true value in the filter_arr 
+How do you join two numpy arrays? What about along a new axis? What about split? ,"np.concatenate(a,b) joins arrays
+np.stack(a,b) concatenates, but along a new axis
+Opposite of np.stack is np.split, which breaks it into multiple equal sized sub arrays. 
+np.array_split(arr, numsplits) is the same as np.split, but it is possible to choose what size sub arrays to split into. "
+What does python super() do? ,"Is used to create a class that will inherit all the methods and properties from another class:
+class Child(Parent):
+ def __init__(self, txt):
+ super().__init__(txt) "
+What does python next(stuff) do? ,"Returns the next item in an iterator and increments it as well.
+Example
+mylist = iter([""apple"", ""banana"", ""cherry""])
+x = next(mylist)
+print(x)
+x = next(mylist)
+print(x) "
+"How do you access a dictionary value, but not throw an error if it doesn't exist? ","Dict.get(key, defaultValue)
+Gets value, returns default if it didn’t exist, and adds it to dict "
+How do you get a tuple of keys and values from a dict in python? ,"Dict.items()
+Returns a tuple of the key,value pairs "
+What is the equivalent of list.extend(stuff) for dictionaries in python? ,"Dict.update({key1:value1, key2:value2})"
+How do you sort a list by some function in python? ,"List.Sort(reverse=True, key=myFunc)
+Sorts by myFunc applied to each element. Called in place and rearranges. "
+"What two methods let you find the location and number of objects in a string, list, or tuple? ","List.index(""hi"") - Searches for ""hi"" and returns the first place where it was found
+List.count(""hi"") - Returns the number of times something occurs in a list "
+What python module has functions for interpolation? ,"scipy.interpolate.interp1d
+xs = np.arange(10). ys = 2*xs + 1. interp_func = interp1d(xs, ys)"
+What python module has SI constants? ,"scipy.constants
+From scipy import constants. Then constants.gram = 0.001, constants.week, constants.mile are all in SI units (meters, seconds, kg)"
+What is the gamma distribution conjugate prior to? ,"Exponential and Poisson 
+------------
+Why? Because it encodes a distribution over something like a ""rate"". 
+Exponential and poisson are siblings "
+What is the beta distribution conjugate prior to? ,"Binomial, bernoulli, negative binomial, and geometric. 
+--------------
+Why? all of them have the same generative model (a bernoulli variable) "
+"Why does MCTS use the number of visits, not the Q function value? ","Because Q is noisy. it can be updated right at the end to favor a weird state, while num visits reflects better the certainty. "
+"What is one major way that the alpha go backup is different from normal MCTS backup? What about alpha go zero? 
+(there are other differences outside the backup too) ","The return is combined with the value predicted by a policy network, to reduce noise.
+For zero, it's purely the value output by the network. No simulation required. "
+How is the alpha go Q value initialized for each node when first encountered? ,"It is set by the parent node, to reflect that bad paths or good paths shouldn't have a bias toward 0 return."
+How is the predictive upper confidence tree algorithm (PUCT) different from UCT? ,"It steers the exploration to require less feedback, and be correct the first time. 
+------------------------------------
+Has confidence term multiplied by probability a policy takes it, to favor likely moves. 
+Also has sqrt(N)/(1+n_i), instead of sqrt(log(N)/n_i), though they asymptote similarly to 1/sqrt(n_i)"
+"Visualize the set of networks used in training the original alpha go network, and what each was used for ","There was a rollout policy and human expert move policy which are trained on the human expert data.
+There was the RL generated agent which was trained using RL and plays differently, and the value function trained on the RL generated agent. 
+Rollout policy and RL generated value function, and human expert move policy were all used in the final gameplay time. "
+Neuralink 3 key design concerns,"safety (long term)
+Scalability (can exchange, etc)
+Access to the relevant parts of the brain (deep, vision centers, etc) "
+How does Neuralink plan to use reinforcement learning ,To understand the output from firing of a large number of neurons 
+What is the reason we need BMIs? (Neuralink presentation by musk) ,Output rate from brain is too slow. Input is fine. 
+How to improve flashcards over time? ,"Make cards more atomic
+Add multiple forms of media, like pictures and text and sound
+Change them up: Avoid learning syntax of question as the memory device "
+"What is an ""orphan"" flash card? ",Some topic without sister flashcards which are conceptually similar 
+Learning a new field: 3 steps according to Nielsen,"Deep dive a major paper (shallow skims first)
+Then deep dive 5-10 more
+Then shallow skim many"
+Common pitfall when trying to learn a new field ,"A common mistake is spending too much time building up knowledge of docs, textbooks, and APIs for example.
+Instead, Nielsen suggests to: Read a paper in depth, or do a project in depth, and take atomic notes in context. Knowledge of basic syntax and terminology will come over time, and in fact may come more easily because it's learned in context with exciting information. "
+Why generative models are expected to be important ,Because you probably have a latent representation if you can do that well 
+"What is the policy gradient theorem, and why is it useful ? ","It lets us represent the gradient of the total returns with respect to some parameters of the policy. Then we can gather measurements of this term, and use it for a gradient descent update. 
+Specifically it takes the total expected return for an entire episode, and expands out the expected return over all possible actions, and transitions, then takes the gradient. "
+How do lambda returns improve on Monte Carlo (MC) estimates and temporal difference (TD) learning? ,"Lambda blends the two.
+MC is unbiased, higher variance, but faster update
+TD is biased, but more stable, slower convergence
+MC is able to update values all over the time space immediately (faster), but has a lot of variance and noise, and is unbiased.
+TD learning works back as a gradient from the end so it is biased by your initial guess, but it has less variance. 
+Lambda: Instead use a mix of biased and slow updates (1 step look ahead with learned value function) and fast but high variance updates (monte carlo on full episode)"
+How does proximal policy optimization and generalized advantage estimation improve on the vanilla policy gradient algorithm? ,"Vanilla usually already has a baseline to reduce variance, and an entropy term for regularization. PPO with GAE makes two changes: replaces the policy term and the Q value term with slightly altered things to prevent rapidly changing the policy, and to give better value estimates with less noise and less bias. ----------
+PPO (proximal policy optimization) has a regularization term to prevent changing the probability of any action too much (removes it from the loss function once it changes too much). This is the clip term. 
+GAE (generalized advantage estimation) takes the best of both worlds of MC (Monte carlo) estimates and 1 step TD learning (temporal difference learning) to rapidly sample the Q value in an unbiased way."
+How do policy gradients improve on TD learning and Q learning? ,"Value based RL is trying to 
+solve a self consistency equation in the TD-learning case. This is hard to solve. 
+Can't handle continuous action spaces
+Can't be stochastic 
+Policy gradient solves this by... 
+Policy gradient to directly learn the policy. This is a smoother space to update (rather than a greedy value function which jumps between actions)
+Can be stochastic
+Can handle continuous action spaces (if you learn the parameters of a distribution) 
+Both are still model free and general "
+"What are the challenges of poker as a reinforcement learning problem, and how to avoid them? ","1. It is highly random, which prevents stable training. 
+2. The state space is huge, and the state of the opponent is largely hidden 3. The action space has local minima (going all in to reduce to random games)."
+"Why is the upper confidence bound in MCTS of the given form (specifically the log(N) and 1/sqrt(n) parts)? 
+Q value + c sqrt( log(N)/n_i)
+Think: concentration bound, then how to limit loss","Concentration bound tells us: Probability of true value being higher than epsilon scales like exp(-n eps^2/2) \equiv delta
+Then you can solve this to give prob true value is higher than sqrt(2 log(1/delta)/n) is delta. 
+Then if you want to have your overall loss be minimized, you want your probability of being wrong to scale like 1/N_samples so that overall loss is capped. To have this scaling, you set delta = 1/N. 
+Now if you choose your arm according to the UCB equation, you will be wrong with a probability that scales less than with 1/N, so your error is bounded"
+"What is the difference between Q learning, TD learning, and policy gradients, compared to MCTS and dynamic programming? ","Latter are model based, former are model free. "
+When can you use MCTS (Monte Carlo tree search) to explore and plan? ,"When you have a model of the environment
+Less important: a relatively small branching ratio (and if you're doing true MCTS, not alpha go zero algorithm, then you need a concrete episode termination and rollout policy.) "
+np.ufuncs. What are they? ,Are specialized array operations that work fast on adding/multiplying arrays. Are usually called internally. 
+"What does numpy.random.choice do? For example:
+x = np.random.choice([3, 5, 7, 9], p=[0.1, 0.3, 0.6, 0.0], size=(100))","This gives array of size 100, with values taken from the first array, and with each value sampled with a probability taken from the corresponding point in the second array"
+Numpy array - what is view and base? ,"arr.view() returns a reference to some data, but not a copy
+arr.copy() is an independent copy 
+np.base will be None if an object is its own data, but will be a reference to another array if object is a ""view"" of another, as in a = b.view() "
+What is the abstract goal of Intelligence augmentation tools (Nielsen)? And how does AI accomplish this? ,"Compact abstraction of concepts, so that humans can operate at a higher level of abstraction, using new forms of primitives which are internalized. "
+Clean coding: What should a function do? How should it be designed? ,"Should be short - a few lines
+Should do only one thing (on an abstract level)
+Should not contain multiple levels of abstraction. Instead call other functions at each new level of abstraction "
+What is a python iterator? ,"It is a wrapper that lets you iterate over items in an object. 
+Example:
+mystr = ""banana""
+myit = iter(mystr)
+print(next(myit))
+print(next(myit))  # will print ""b"" then ""a"" then ""n"" ... "
+What does python map do? ,"Map()
+The map() function executes a specified function for each item in an iterable.
+If function has 2 parameters,  call ""map(func, it1, it2)"""
+How do you split a string in python? ,"String.Split(c) - Splits at character c, returns list
+String.Splitlines() - Returns list with split lines "
+Python file access commands for opening a file and reading it ,"For reading:
+f = open(""hello.txt"", ""r"")
+text = f.read()  # reads whole thing
+line = f.readline()  # reads a line
+f.close()  # do this at the end "
+"What is the gamma distribution formula, and what can it look like? ","Is a generalization of the chi-squared distribution and exponential 
+	Looks like PDF which is similar to exponential, or poisson, or chi squared "
+"What is the beta distribution formula, and what can it look like? ","Lives on interval 0 to 1
+PDF can be nice gaussian looking, or uniform, or highly skewed"
+"What is a conjugate prior distribution in statistics, and why is it useful? ","It is the set of functions (sufficiently general) so that your posterior FOR THE PARAMETERS OF A PROBABILITY DISTRIBUTION is always in that set of function, even after you make some measurements or observations of the system. That is, your prior is in this set of functions, and your posterior is as well.
+This can sometimes let you do an analytic calculation of the Bayesian update rule (for example with a binomial variable) .
+Example: You know you have a bernoulli variable. It has some parameter theta. You have a prior distribution for theta (maybe it's uniform in 0 to 1) that can be expressed as a beta function with some parameters. You can analytically do the math to show that the correct posterior for theta is another beta distribution that depends in an analytic way on your sampled data and initial beta parameters"
+Chi-squared distribution ,"Distribution of the sum of squares of normally distributed variables (usually with std dev 1). 
+Explicit formula is complicated. Rough idea is PDF goes like x^a e^-x/2 so a polyomial term times an exponential. CDF is more like an exponential 
+Basic idea is it lets us construct confidence intervals"
+Various types of means. ie Arithmetic mean vs geometric mean vs harmonic meanWhen is each used? ,"Most general is called p-norm. (1/n*Sum of x^p)^(1/p).p=-1 is harmonicp=1 is arithmeticp=2 is quadraticp->0 is geometric (to prove, take exponential of log of this, then l'hopital it)p-> infinity is the maximum------------Geometric mean is the Nth root of the product of n numbers: N-root(x1*x2*...)
+Often used for things that have meaning when multiplied as a product (ie where the objects are exponentials of some rate)
+Harmonic mean is N*(1/x1 + 1/x2 + ...)
+Dominated by the minimum of the arguments 
+Used when you are finding average of rates (think of example of ""average speed of a car trip)
+Quadratic mean: sqrt of sum of squares"
+Log-normal distribution ,"The log of the values is normally distributed. 
+The exponentiation of a normally distributed variable is log-normal distributed. 
+You can go through the change of variables math easily to derive the PDF shown in image 
+PDF is only at positive values. It is sort of like Poisson looking, but very asymmetric 
+This shows up when you have a product of many independent random variables. This is known as Gibrat's law. 
+You can derive this quickly by immediately asking what is the probability distribution of the log of the product of stuff. It will converge, by central limit theorem, to a Gaussian, QED you are log normal (the log of your variable (the product) is normal distributed). "
+Weibull distribution ,"A generalization of the exponential distribution, characterizing time to failure.
+It allows the rate of failure to depend on time (ie go like time to some power). End result is a P(x) which goes like (is dominated by) e^-(x^2) or e^-(x^k) for some k."
+Geometric distribution ,"Physically: how many failures before the first success (how many tails before the first heads)
+P(x) = (1-p)^x p 
+E(x) = 1/p
+var(X) = (1-p)/p^2
+It's built from the Bernoulli distribution, and it leads to the exponential distribution in the limit of becoming a rate process. 
+""Negative binomial distribution"" is a generalization (kind of like hypergeometric is a generalization of bernoulli). It asks the probability of the the number of failures being X before the first r successes (not just the first success)."
+Bernoulli distribution ,"Pure single coin toss. 
+-> Binomial with more coin tosses. 
+-> Hypergeometric without replacement "
+Hypergeometric distribution ,"This probability distribution is similar to the binomial distribution. 
+Binomial: If you draw white and black balls from an urn (where there's some ratio of them), and always place it back before the next trial, and do n trials, thats binomial.
+Hypergeoemtric: This is the same, but you do not replace the balls after drawing them from the urn. Thus it ends up being a bit different from Binomial, but otherwise pretty close. "
+"Exponential distribution, mean, and variance ","Probability density is Lambda*e^-Lambda x.
+Physically it gives the probability of an interval length between poisson distributed random events. 
+Mean is 1/Lambda, and variance is 1/Lambda squared."
+Normal distribution ,"Shows up everywhere because of central limit theorem.
+Know explicit formula "
+Poisson distribution ,"How many events in a process with continuous rate in some fixed time? Each time is independent with some fixed probability. 
+Main control parameter is rate times time, which gives average number observed. 
+Mean and variance are both the average. This is the limit of a binomial distribution with p going to 0, but repeated many times."
+Binomial distribution ,"Number of heads and tails in a certain number of coin flips. 
+Mean is np
+variance is np(1-p)"
+Importance of determinants ,Tells you if a matrix is invertible 
+"Singular Value Decomposition of a matrix:
+What is its purpose?
+What are key components of proof that it exists? ","Purpose: The singular value decomposition makes it possible to diagonalize and invert matrices, and generally makes matrix manipulation easier.
+Key components:
+The Schur decomposition shows any square matrix is able to be made upper triangular. 
+The spectral theorem for square matrices shows that any normal square matrix is diagonalizable (uses Schur).
+Finally, the singular value decomposition of a matrix M is a specific application of the spectral theorem to the matrix M * M, and M M* matrix, and followed by a few steps. "
+What is the biggest unmet challenge in working with neural networks? ,"Understanding neural network structure and information flow
+One solution: Finding equivalence classes and methods to distill network down to a similar structure, regardless of the starting structure "
+"Sam altman AI talk main points
+What are the main business products for Language Models? ","Main products (rather than research questions)
+A search engine that can compete with google
+Companies will perform fine tuning of large language models for specific applications 
+Contributing to science by creating new knowledge (alpha fold), and by accelerating research productivity for each individual with new tools "
+"What is Jensen-Shannon divergence, and what properties of basic Kulback Liebler divergence make it useful.
+What is it used in (what type of reinforcement learning?) ","Jensen shannon is Kulback Liebler divergence of p from (p+q)/2 plus Kulback Liebler divergence of q from (p+q)/2, averaged 
+One portion of this punishes the model having predictions where there isn't data, the other portion punishes the data existing where the model is not 
+Normal maximum likelihood estimation only pushes model to predict data. It doesn't penalize predicting things that aren't the data. 
+Jensen Shannon divergence is used for generative adversarial networks."
+What are Boltzmann machines? How is the math set up? ,Think about the math necessary to setup the problem. Boltzmann machines are energy based models with weights and biases between layers that define an energy for each configuration of activations within each layer. This energy leads to a Boltzmann probability distribution over the visible layer activations via maximization of entropy. 
+Are LLMs sentient (Chalmers talk) main takeaway ,"General idea: 10% chance now, but most objections are likely to be temporary."
+Main applications of machine learning in physics problems ,"(from least to most interesting...)
+1. Constructing generative models for data, and representing states (examples: molecular structure prediction and generation, and quantum field theory lattice sampling)
+2. Learning equations of motion or effective models (example: learning the equations of motion for active matter)
+3. Experimental design and hypothesis generation (example: ultimately, being able to replace a graduate student)"
+Eras of science and discovery (methods) according to Max Welling ,"1. Empirical trial and error (think of experimenters in the 1600s discovering what nature does with gasses and liquids and things like this)
+2. Data driven modelling (physical prototyping. Think of designing a plane by building toy models and testing them in a wind tunnel)
+3. In-silico design (think of purely computational simulation of building a plane and how it behaves in a wind tunnel)
+4. Self-improving emulators (this is the predicted fourth stage of science and discovery, where computers generate predictions and data in a way that is less directed by humans. For example, generating molecular designs for drug targets)"
+Energy-based methods and Boltzmann learning: when is this the best model? ,"General principle: Energy-based methods are best for describing situations with restricted uncertainty on some variables, but maximal uncertainty on all other things.
+Indeed, the Boltzmann distribution with some ""energy"" is the most general way to encode a distribution which satisfies some average properties (this can be shown using Lagrange multipliers) but otherwise has the maximum entropy possible. "
+Expectation maximization algorithm - describe the basic setup and steps ,"The overall goal is to maximize the log likelihood of data within the structure of a given model. 
+Expectation maximization assumes that latent variables exist which describe the data (such as clusters of data being drawn from similar groups)
+The algorithm assigns each datapoint to a cluster with a given probability, then updates the parameters of the clusters to optimize overall data reconstruction, and then reassigns datapoints to their new optimal clusters, and then repeats "
+What is generalized policy iteration? ,"Policy evaluation is updating the value function. TD update rule with learning rate converges to value function of policy you were taking already, if you never update the policy. Every policy has one corresponding value function
+Policy improvement. Acting greedily with respect to a value function will not decrease the value of any state "
+How to alter variable scope inside a function ,"by default anything new is local. 
+Global variables used inside should be declared as ""global x"" "
+Major array types and properties ,"○ List is a collection which is ordered and changeable. Allows duplicate members.
+		○ Tuple is a collection which is ordered and unchangeable. Allows duplicate members.
+		○ Set is a collection which is unordered, unchangeable*, and unindexed. No duplicate members.
+Dictionary is a collection which is ordered** and changeable. No duplicate members. "
+How to unpack multiple elements in a list ,"use asterisk. 
+		fruits = (""apple"", ""banana"", ""cherry"", ""strawberry"", ""raspberry"")
+green, yellow, *red = fruits "
+print attributes and methods of a class ,dir(object) 
+how to concatenate two lists in python? ,"• Can extend a list by multiple elements (that is, another list) using 
+mylist.extend(newlist) to alter mylist "
+List comprehension examples in Python ,"○ fruits = [""apple"", ""banana"", ""cherry"", ""kiwi"", ""mango""]
+		○ newlist = [x for x in fruits if ""a"" in x]
+		○ newlist  = [expression for item in iterable if condition == True]
+newlist = [x if x != ""banana"" else ""orange"" for x in fruits] "
+Key components of modern large pretrained language models (architecture and training method) ,"Transformer, and word prediction training method
+----------
+Transformers for attention, and byte pair encoder-decoder to streamline meaning extraction by still keeping odd and unique words within the vocabulary. 
+Self-supervised learning from generative problems, such as masking out a word and predicting it.These methods work so well because they are a general enough task that they bias the system toward learning general NLP abilities like sentence structure, grammar, meaning, etc. 
+These are complementary ideas: Transformer and masking word are simplest ways to impose structure that make learning efficient, but still have a sufficiently general function space or optimization plateau to be good at general problems. "
+Geologic history timescales ,"Timeline for continental drift is Pangea around 200m years ago 
+Permian epoch ended with mass extinction geological activitity around 250m years ago. 95% of species lost. Unclear exactly how. Greenhouse gasses from volcanism in Siberia, and sea level drop exposing co2 deposits near the ocean.
+Cretaceous ended around 66 m years ago with chixculub crater. 10 years of cold."
+Computer network layers ,"Physical network 1. Physical Ethernet connection and Mac addresses and collisions 2. Data link is Ethernet protocols 3. Network is physical router and cables 
+Information sent over network 4. Transport is packet protocols like IP 5. Session is TCP for opening and closing sessions"
+Two types of programming ,Dynamic programming and gradient descent as the two main algorithmic approaches 
+Algorithmic complexity of mergesort ,"n log_2(n) 
+because of log_2(n) layers, and each layer takes n/2 comparisons to cycle through"
+Why don't we train Mnist data to output classification in binary? ,"There are physical locations in the image that correspond to the different digits, but not to the ""most significant part of the binary representation of the digit""
+It's about how the information is encoded into the data. "
+Generalized gradient descent methods (stochastic) ,"Momentum based (keep fraction of previous change going in next, has some decay time)
+Track second moment of gradient as wellIf gradient is decreasing, then slow down, if it is increasing, then speed up. ADAM algorithm moves by momentum/(sqrt(variance +m^2) + epsilon), so that when variance is high, it slows down, but for persistent gradients, it is capped at some speed."
+Limitations of simple gradient descent ,"It only finds a local minimum.
+The speed is limited. If you move too fast, you get out of a minimum. 
+------
+In particular, you can only move at a rate that is set by the fastest changing cost landscape (and newton's method using the curvature can tell you what speed that is). The general multi-dimensional newton's method is not computationally efficient (involves calculating the Hessian). "
+Main properties of Plants ,"Plants use cellulose for structure, and are photosynthetic autotrophs "
+Properties of Fungi ,"Fungi - chitin, mushrooms, yeasts, molds, heterotrophs. 
+Interesting life cycle, asexual and other types of reproduction, sporing, 
+Primary role is decomposers "
+Properties of animals - what are some shared characteristics of all animals? ,"Multicellular, breathe oxygen, move around, reproduce sexually, and have similar blastular development "
+Examples of poor natural agents (animals) as a cool story ,"Dung beetle keeps pushing after removing object
+Sphinx wasp resets task order if interrupted (comes back out and drags it back) "
+"In reinforcement learning, what are the two major axes which characterize an environment? ","Axis 1: How much is observable about 
+The state (observability of the physical environment. Parts of it can be hidden) 
+The rules of physics (are these known or unknown) 
+The environment of agents (the internal representations of others) 
+(Generally these are axes which lead to more probabilistic outcomes)
+------------------------------------
+Axis 2: Discrete vs continuous in 
+Time
+Space 
+Causality structure (is evolution episodic so that there are discrete breaks in the causal structure, or is the environment and timeline continuously evolving without any breaks?)"
+Why do scientific inference problems (like for wave equation for active matter) work now? Why are they timely as a research question? ,"We are getting access to new datasets on complex problems, that are unpublished so far (this is why it is possible, and timely). 
+The solution method works on a problem with local interactions that possesses some assumed simple analytic form for the solution (the equations of motion). So we know it is possible. 
+It is also timely because it is harder than what humans can guess and check in some easy way. So we need machine learning to solve it. "
+Puzzle about why neural networks work: what are properties that make it work? ,"There is something about the structure of the real environment which is amenable to this representation.
+Neural nets are sufficiently general and flexible
+Gradient descent is somehow able to approach the optimal configuration "
+What is important about high dimensionality for learning ,Local minima probably don't exist. There's always an escape direction 
+Why Sample Variance is Divided by n-1,It's a better estimate for the true population variance 
+"How much trash is generated by the united states population each year by volume (in total, and per person)? ","Each person generates 3 cubic meters of solid waste per year.
+There are 300 million people in the united states, roughly.
+The result is 1 cubic kilometer of trash every year, if we wanted to put it into a landfill only"
+Fusion reaction process ,"Sparc talk - cycle of fusion reaction, dependence on magnetic length 
+	Dueterium tritium becomes helium and neutron, neutron combines with lithium to give helium and tritium
+So you just have to put in lithium and deuterium in principle and get out heat and helium "
+High level description of boosting ,Boosting is a method to combine weak learners (simple functions) into more complex functions or strong learners.Adaboost and XGboost 
+How does bagging reduce variance ,"Not by sampling more data, but rather making it as if you sampled more data by doing some transformation that introduces randomization into your model in a way that is like sampling more data. "
+What is the cost function usually for inferring the functional form of data? ,"Cost function is always the Kulback Liebler (KL) divergence from the model predictions to the data at each x axis location. That is, it is the entropy with the model predictions inside the log and the data points outside the log, minus the entropy with the data points everywhere. "
+Income distribution follows Pareto law. What is it? ,"Fraction higher than x scales like 1/x^alpha. For income it’s between 2 and 3 equals alpha. So 1/100 people income 100k. 1/10,000 people income 1 million. 1/300 million income 100 million roughly."
+Economic model of growth main points ,"3 levels
+Level 1: Food capital and labor capital.
+Level 2: Knowledge (technology) and investment capital to make level 1 more efficient.
+Level 3: Network capital to be better at figuring out new technology (the scientific system), and better at more efficiently distributing investment capital (financial markets)"
+Pinkers trends that help the environment (3 ds),"Densification, dematerialization, decarbonization as natural processes "
+Pinkers ideas for how to combat CO2 and global warming,"At source: carbon taxation or credits, and nuclear energy
+At end: carbon capture, geoengineering, and adaptation "
+How does a Squid magnetometer work? ,SQUID magnetometer in terms of JJ.  - Bias near critical current. Screening sends one JJ above Ic. Produces a voltage drop. 
+Power transmission line physics: why high voltage? ,"Power is I^2 R in transmission lines. With fixed R, have to lower I. 
+Transformers at output conserve energy, so if some device needs power P=IV_low, then I_high = I*V_low/V_high. 
+Power losses in the cable can be significantly reduced with high voltage."
+What are some things to be careful about when evaluating a deep learning model? (These are a few of Andrew Ng's suggestions for a good deep learning workflow) ,"Always know the human error rate at some task. This is the benchmark you should be comparing your performance to. 
+Be careful about test set being a physically different distribution from your development set. One example is audio identification for use in a self driving card, maybe your training data was hard to collect so you used general speech recognition training data, but the data in the car has specific background noise types that make it perform differently. "
+Benefits of neural networks compared to other machine learning methods ,"Benefit from huge data without fine tuning in ways that other models do not 
+Can learn to represent concepts that are transferable and hierarchical 
+Flexible at representing things "
+Limitations of neural networks (NNs) ,"Need labeled data, and lots of it
+Can't easily deal with inhomogenous datatypes (while decision trees can, for example) Hard to interpret "
+"Boosting algorithms, review interpretation ","Adaboost as gathering good predictions at the most uncertain points but diffusing at the most certain points (which happens slower, so it's fine),  XGboost as taylor approximation in different remaining residual subspaces "
+"What is the way to solve the bandit problem?
+In brief, you have multiple ""arms"", or choices of what decision to make. You assume a uniform distribution on the return for each arm with some noise, and some average value. With repeated trials, you gather some return from each arm. ","You use the upper confidence bound algorithm.
+In brief, you explore each arm until you get enough statistical knowledge of its average value compared to other arms. The metric to minimize is the expected negative return in the worst case scenario. "
+Methods of dimensional reduction ,"PCA, t-SNEImportant differnce is PCA is parametric meaning we can do it to a new datapoint right away, while t-SNE is not "
+Types of clustering algorithms ,"K means, hierarchical, density based, expectation maximization with gaussian mixtures. Really think through expectation maximization and others "
+Nielsen on Artificial general intelligence (AGI) - what two notions of complexity determine whether its possible? ,"Viewpoint 1, connectomic complexity: complexity is on the neuron map level (this assumes you must specify the 70 quadrillion numbers roughly that are the floating point representation of the 100 trillion synapses of 100 billion neurons in a human brain) 
+Viewpoint 2, programmatic complexity: complexity is the genetic difference between monkeys and humans in terms of the genetic code (125 million base pairs roughly out of 3 billion basepairs, or 4 percent, are different)"
