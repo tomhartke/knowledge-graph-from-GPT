@@ -1,4 +1,4 @@
-# knowledge-graph-from-GPT-3
+# A knowledge graph from GPT-3
  
 ## High-level description
 This program uses chained prompts to GPT-3 to organize unstructured information, then access this information to answer questions, and generate further questions. 
@@ -42,9 +42,17 @@ A human interpretable
 ### Structuring the knowledge graph
 The natural language embeddings of each concept or card allow one to cluster concepts through various 
 methods. 
-> Similarity metric
-![Alt text](docs/SimilarityMetric.jpg?raw=true "Optional")
-1. Cluster question/answer pairs based on similarity metric. 
+
+1. Defining the similarity metric
+> ![Alt text](docs/SimilarityMetric.jpg?raw=true "Optional")
+Here is an example matrix of all card-card similarities in the knowledge graph.
+![Alt text](docs/ExampleSimilarityMatrix.jpg?raw=true "Optional") 
+
+2. Example similarity calculations
+    - ![Alt text](docs/ExampleNodeNodeOverlap.jpg?raw=true "Optional")  
+    - ![Alt text](docs/ExampleNodeCardOverlap.jpg?raw=true "Optional")  
+
+3. Clustering ideas (question/answer pairs) based on the similarity metric. 
    - Here are some example clusters of cards (phrased as a "family tree")
    ![Alt text](docs/ExampleClusterHierarchies.jpg?raw=true "Optional")
    - The clustering algorithm is just something I hacked together, and isn't very polished (but works reasonably well).
@@ -92,7 +100,7 @@ and then gather similar cards to this question to re-expose to the language mode
    which further improves the quality of the question embedding.
      
 2. Gather similar cards 
-    1. In the simplest case, this can just be the top k cards via the similarity metric.
+    1. In the simplest case, this can just be the top k cards ranked via the similarity metric.
 3. Answer the question by re-prompting the language model while showing related information
 ![Alt text](docs/QuestionAnswering.jpg?raw=true "Optional")
 ![Alt text](docs/ExampleQuestionAnswering.jpg?raw=true "Optional")
