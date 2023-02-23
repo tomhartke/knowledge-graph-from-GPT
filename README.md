@@ -6,6 +6,32 @@ This program uses chained prompts to GPT-3 to organize unstructured information,
 ### Goals:
 A human interpretable
 
+Issues it's addressing:
+* Memory 
+* Logic 
+* Interpretability
+* Reinforcement learning with the environment 
+* Computational resource use for training (should be able to run on my laptop, with LLM calls but not training)
+
+What it's not addressing:
+Hardware of the language model is fundamentally still fixed
+Why? Fundamentally high level reasoning doesn't require maximal intelligence. Instead it requires step by step reasoning.
+
+#### Uses
+1. Database generation and parsing + question answering
+    * Summarize a research field or class notes or textbook
+    * Identify conflicting information and disputes
+    * Categorize different explanations for the same topic or idea 
+    * (ie different quantum mechanics textbooks) and offer them to people
+
+2. Educational and personal learning tool
+    * Spaced-repetition flashcard assistant.
+    * Can have expert knowledge systems (ie areas of knowledge like statistics) encoded as knowledge graphs.
+
+3. Hypothesis generation for scientific research 
+    * Come up with ideas from scratch
+    * Read a set of papers and find gaps in knowledge
+
 ### Constructing the knowledge graph
 1. Concept extraction from question/answer pair:
 ![Alt text](docs/ConceptExtraction.jpg?raw=true "Optional")
@@ -126,7 +152,49 @@ to gather more information.
 This will require some notion of "value" for the information in the knowledge graph (to balance pure exploration with 
 exploration of relevant concepts). Perhaps 
 
+Set up self pruning and revisiting of the knowledge graph, when in idle state (like sleeping)
+
 #### Structured and hierarchical question-answering
+Get it to answer a multi-stage question prompt with sub-questions 
+
 Ideally, I want the language model to only answer questions based on information that is explicitly in the knowledge graph.
 I want it to identify when it has sufficient information or not. If not, it should make sub-queries to the knowledge graph to fill in
 specific parts of the answer (thereby avoiding the constraint of the concept window size). 
+
+These questions and sub-questions could be added to the knowledge graph as memory.
+
+#### Specializing the language model
+Can train language model to improve itself based on examples (for example for extracting the concept hierarchy)
+Could have a dedicated smaller network for this (similar to the dedicated internal policy and value networks in alpha go zero).
+
+#### Set up as a personal flashcard system (smart spaced-repetition memory training with LLMs)
+Incorporate spaced repetition and probability of memory. 
+Generate complex and organic questions to test concepts within a cluster of cards.
+Learn some parameters for you (your personal rate of forgetting. Your interests and base knowledge)
+Have preset expert knowledge structures to learn, and teach (ie a module of cards on statistics)
+Have a nice way of visualizing your personal knowledge graph by clustering.
+
+#### Very long term foreseen issues
+Get synonym directory to help collapse nodes (words)
+How to handle other datatypes other than text?
+How to handle very short or very long text or concepts (things like math, or huge formulas?)
+As a plugin to always ask you to summarize what you read the last 10 minutes
+Interface it with whisper or something to do speech to text and then summarize
+
+#### Ideas to emphasize:
+- Human interpretability of the embedding vector
+- Leveraging the local network structure to have a high quality (useful) embedding (more so than just a globally learned embedding from all text on the internet)
+- Bootstrapping and policy improvement through self-generated examples. 
+- Link to idea of nearest-neighbors transformer implementations
+  - Non-parametric transformer
+  - Other ones that use memory of various kinds. 
+
+#### References to add
+Reference Glom by Hinton when talking about hierarchy. 
+
+Contrastive divergence embedding thing needs to be clearer.  
+
+Reference to chain of thought reasoning paper, and realization that I can't get it to provide the concept
+hierarchy before it explains what's going on (has to explain first, then concept extraction).
+
+Reference OpenAI embeddings, and GPT-index. 
