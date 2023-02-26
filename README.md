@@ -1,28 +1,42 @@
 # A knowledge graph from GPT-3
  
 ## High-level description
-This program uses chained prompts to GPT-3 to organize unstructured information, then access this information to answer questions, and generate further questions. 
+This program is meant to serve as an external memory module for a language model, and ultimately provide 
+agent-like capabailities to a language model (long-term goal).
+* The language model + knowledge graph can categorize and absorb facts, and quickly update beliefs given new observations. 
+* The structure of the knowledge graph is fully-human interpretable. 
+  * Even the embeddings of information, and the facts themselves, are in natural language.
+* Given a question to the model, it can identify the most related facts, and re-expose them to the model 
+when answering the question. 
+  * The identical model (model paramters) can thereby learn to change it's behavior with one example.  
+
+Future extensions to increase agency:
+* An external reinforcement learning algorithm could identify gaps in knowledge, or inconsistencies, and show these to the language model.
+  * This could be fast, without language model queries.
+* The language model could then propose further questions to ask the environment as clarification, 
+building knowledge over time. 
 
 ### Goals:
-A human interpretable
+(To be clarified)
 
 Issues it's addressing:
 * Memory 
 * Logic 
 * Interpretability
-* Reinforcement learning with the environment 
-* Computational resource use for training (should be able to run on my laptop, with LLM calls but not training)
+* Reinforcement learning with the environment through repeated calls/answers
+* Computational resource use for training (knowledge updates are external, no retraining the model)
 
 What it's not addressing:
-Hardware of the language model is fundamentally still fixed
-Why? Fundamentally high level reasoning doesn't require maximal intelligence. Instead it requires step by step reasoning.
+Hardware of the language model is fundamentally still fixed. 
+The model could be further fine tuned to mimic the behavior of the enhanced model + knowledge graph 
+(similar to policy improvement in Monte-Carlo tree search).
 
 #### Uses
 1. Database generation and parsing + question answering
     * Summarize a research field or class notes or textbook
     * Identify conflicting information and disputes
     * Categorize different explanations for the same topic or idea 
-    * (ie different quantum mechanics textbooks) and offer them to people
+   (ie different quantum mechanics textbooks) and offer them to people
 
 2. Educational and personal learning tool
     * Spaced-repetition flashcard assistant.
@@ -58,6 +72,7 @@ Why? Fundamentally high level reasoning doesn't require maximal intelligence. In
      - The ultimate embedding connection strength is then the statistical weight of the upper confidence bound beta distribution below the observed connection strength.
    - Step 3: Gather long range connection embeddings based on the metric from step 2. 
      - This is once again somewhat complicated, but probably more necessary.
+     - (Need to write up the description here still)
 3. Card embedding based on concepts
 ![Alt text](docs/CardEmbedding.jpg?raw=true "Optional")
     - The card embedding is a weighted sum of the concept embedding vectors from the concepts identified in the card.
@@ -150,9 +165,9 @@ be used to actually generate meaningful and conceptually different questions, wh
 to gather more information. 
 
 This will require some notion of "value" for the information in the knowledge graph (to balance pure exploration with 
-exploration of relevant concepts). Perhaps 
+exploration of relevant concepts). 
 
-Set up self pruning and revisiting of the knowledge graph, when in idle state (like sleeping)
+Will probably have to set up self pruning and revisiting of the knowledge graph, when in idle state (like sleeping)
 
 #### Structured and hierarchical question-answering
 Get it to answer a multi-stage question prompt with sub-questions 
@@ -164,24 +179,24 @@ specific parts of the answer (thereby avoiding the constraint of the concept win
 These questions and sub-questions could be added to the knowledge graph as memory.
 
 #### Specializing the language model
-Can train language model to improve itself based on examples (for example for extracting the concept hierarchy)
+Can train language model to improve itself based on examples (for example for extracting the concept hierarchy). 
 Could have a dedicated smaller network for this (similar to the dedicated internal policy and value networks in alpha go zero).
 
 #### Set up as a personal flashcard system (smart spaced-repetition memory training with LLMs)
-Incorporate spaced repetition and probability of memory. 
-Generate complex and organic questions to test concepts within a cluster of cards.
-Learn some parameters for you (your personal rate of forgetting. Your interests and base knowledge)
-Have preset expert knowledge structures to learn, and teach (ie a module of cards on statistics)
-Have a nice way of visualizing your personal knowledge graph by clustering.
+* Incorporate spaced repetition and probability of memory. 
+* Generate complex and organic questions to test concepts within a cluster of cards.
+* Learn some parameters for you (your personal rate of forgetting. Your interests and base knowledge).
+* Have preset expert knowledge structures to learn, and teach (ie a module of cards on statistics).
+* Have a nice way of visualizing your personal knowledge graph by clustering.
 
 #### Very long term foreseen issues
-Get synonym directory to help collapse nodes (words)
-How to handle other datatypes other than text?
-How to handle very short or very long text or concepts (things like math, or huge formulas?)
-As a plugin to always ask you to summarize what you read the last 10 minutes
-Interface it with whisper or something to do speech to text and then summarize
+* Get synonym directory to help collapse nodes (words).
+* How to handle other datatypes other than text?
+* How to handle very short or very long text or concepts (things like math, or huge formulas?).
+* As a plugin to always ask you to summarize what you read the last 10 minutes.
+* Interface it with whisper or something to do speech to text and then summarize.
 
-#### Ideas to emphasize:
+#### Ideas to emphasize in the description:
 - Human interpretability of the embedding vector
 - Leveraging the local network structure to have a high quality (useful) embedding (more so than just a globally learned embedding from all text on the internet)
 - Bootstrapping and policy improvement through self-generated examples. 
