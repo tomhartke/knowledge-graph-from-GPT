@@ -309,7 +309,7 @@ For example, non-parametric transformers, and various other transformer architec
 * There are attempts to build systems for structured question answering through breaking down into components, such as 
 the factored cognition primer - https://primer.ought.org/.
 
-Hinton suggests that using a hierarchy of concepts is crucial: https://arxiv.org/abs/2102.12627.
+Hinton suggests that using a hierarchy of concepts is crucial: https://arxiv.org/abs/2102.12627 ("How to represent part-whole hierarchies in a neural network").
 
 ### Unique(ish) contributions
 Just to summarize, a few of the more unique aspects here in my implementation are (to my knowledge, though I 
