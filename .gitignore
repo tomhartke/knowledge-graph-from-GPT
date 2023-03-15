@@ -1,5 +1,4 @@
 KnowledgeGraphFigures.key
-__pycache__
+__pycache__/*
 .DS_Store
-.gitattributes
-.gitignore
+.ipynb_checkpoints/*
