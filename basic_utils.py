@@ -11,13 +11,11 @@ import time
 from pprint import pprint as pprint
 
 # Load your API key from an environment variable or secret management service
-openai.api_key = os.getenv("OPENAI_API_KEY")
+openai.api_key = os.getenv("OPENAI_API_KEY") 
 model_to_use =  "text-davinci-003"
     # "gpt-3.5-turbo-0301" is more moderns
     # "text-curie-001" is 10x cheaper than "text-davinci-003", but not as good
     # "text-davinci-002" is faster than 3, but not necessarily worse at explaining?
-    
-model_chat_engine = "gpt-3.5-turbo" 
     
 # Setup interface with language model
 
@@ -50,16 +48,3 @@ def display_dict_sorted_by_decreasing_value(_dict, print_num=10):
     sorted_keys, sorted_values = get_dict_items_sorted_by_decreasing_value(_dict)
     pprint(list(zip(sorted_keys, sorted_values))[0:print_num])
     
-    
-    
-def gen_chat_response(prompt='hi'):
-    response = openai.ChatCompletion.create(
-        model=model_chat_engine,
-        messages=[
-            {"role": "system", "content": ("You are a helpful professor and scientist. You want to help a fellow researcher learn more about the world. "
-                                           + "You are clear, concise, and precise in your answers.")},
-            {"role": "user", "content": prompt},
-        ])
-    message = response.choices[0]['message']
-
-    return message['content']

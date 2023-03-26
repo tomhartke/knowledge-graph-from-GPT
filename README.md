@@ -161,6 +161,9 @@ methods.
 > ![Alt text](docs/SimilarityMetric.jpg?raw=true "Optional")
 Here is an example matrix of all card-card similarities in the knowledge graph.
 ![Alt text](docs/ExampleSimilarityMatrix.jpg?raw=true "Optional") 
+Here is an interactive clustering visualization.
+![Alt text](docs/ClusteringDemonstration.jpg?raw=true "Optional") 
+ 
 
 2. Example similarity calculations
     - ![Alt text](docs/ExampleNodeNodeOverlap.jpg?raw=true "Optional")  
@@ -247,6 +250,33 @@ Long term, this process is promising as a method of recursive self-improvement.
 If we can get the model to ask and generate good questions, and if we can identify the best clusters of scientific questions
 in the knowledge graph to use as generative examples, the entire combined system should recursively self improve
 (think of AlphaGo zero). 
+
+### User interface
+March 2023: I added a user interface which can be launched to interactively explore questions, then
+generate answers, then save them to the knowledge graph.
+
+Purpose: Use interface to explore related topics and intriguing questions.
+
+General workflow:
+- First select the topic, and goal command, then use the "generate new questions" button to generate some number
+of new questions the user wants to explore.
+- Second look at the generated questions, and choose which ones to keep or not.
+- Third, gather related questions in the graph so that LLM knows what you already learned.
+- Generate more questions, and repeat triage process, until you have a set of questions you want answered.
+- Lastly, answer the new questions, then edit the answers, then save to the knowledge graph and long term storage. 
+
+Example screenshots:
+
+>Generating questions initially, and finding related information in graph:
+![Alt text](docs/UserInterface_GeneratingQuestions.jpg?raw=true "Optional") 
+
+>Selecting which questions to keep, or remove, and repeatedly regenerating new questions:
+![Alt text](docs/UserInterface_RefiningQuestions.jpg?raw=true "Optional") 
+
+>Finally "Answering new questions" using ChatGPT, then editing and "Save and Reset" to 
+load this information into the knowledge graph, and save in long term data.
+![Alt text](docs/UserInterface_AnsweringQuestions.jpg?raw=true "Optional") 
+
 
 ## Future extensions
 

@@ -16,12 +16,10 @@ def save_cards_df_to_json(cards_df, save_file_name):
     cards_df_as_json = cards_df.to_json(orient="index")
     with open(save_file_name + '.json', 'w') as f:
         json.dump(cards_df_as_json, f)
-    f.close()
     
 def read_cards_df_from_json(save_file_name):
-    f = open(save_file_name + '.json')
-    cards_df_reloaded = pd.read_json(json.load(f), orient="index")
-    f.close()
+    with open(save_file_name + '.json', 'r') as f:
+        cards_df_reloaded = pd.read_json(json.load(f), orient="index")
     return cards_df_reloaded
 
 
@@ -246,7 +244,7 @@ def get_cards_df_meta_data_from_text_descriptions(cards_df_text_descriptions,
             # pprint(combined_dict)
             flashcard_list_of_dicts.append(combined_dict)
 
-        print("Total used tokens:",total_used_tokens, " for card index ", card_ind)
+        print("Total used tokens:", total_used_tokens, " for card index ", card_ind)
         global_tokens_used_for_card_reading += total_used_tokens
         
     cards_df_meta_data = pd.DataFrame(flashcard_list_of_dicts)

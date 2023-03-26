@@ -18,10 +18,10 @@ CONCEPT_LIST_PROMPT = "Extracted key words and concepts: "
 RELATED_QUESTION_PROMPT = "Related question: "
 
 def wrap_question_text(question_text):
-    return QUESTION_PROMPT + "{" + question_text + '}'
+    return QUESTION_PROMPT + "{" + str(question_text) + '}'
 
 def wrap_answer_text(answer_text):
-    return ANSWER_PROMPT + "{" + answer_text + '}'
+    return ANSWER_PROMPT + "{" + str(answer_text) + '}'
 
 def wrap_concept_list_text(concept_list):
     concept_list_string = '["' + '", "'.join(concept_list) + '"]'
@@ -32,9 +32,10 @@ def wrap_concept_list_nice_text(concept_list):
     concept_list_string = ', '.join(concept_list) 
     concept_string = CONCEPT_LIST_PROMPT + concept_list_string
     return concept_string
+    
 
 def chain_card_example_objects(ordered_list_of_objects, cardID_list, knowledgeGraph):
-    possible_objects = ["question", "answer", "concept_list", "concept_list_nice"]
+    possible_objects = ["question", "answer", "concept_list", "concept_list_nice", "abstraction_groups"]
     assert all([(obj in possible_objects) for obj in ordered_list_of_objects]), ("Failed to chain "
               "card examples: some object is not one of the allowed objects")
     
@@ -47,6 +48,8 @@ def chain_card_example_objects(ordered_list_of_objects, cardID_list, knowledgeGr
             return wrap_concept_list_text(knowledgeGraph.cards[cardID].concepts.get_concepts_list())
         elif obj == "concept_list_nice":
             return wrap_concept_list_nice_text(knowledgeGraph.cards[cardID].concepts.get_concepts_list())
+        elif obj == "abstraction_groups":
+            return CONCEPT_LIST_PROMPT  + knowledgeGraph.cards[cardID].concepts.get_abstractions_dict_as_JSON_str()
     
     chain_of_examples = ""
     for cardID in cardID_list:
@@ -92,6 +95,10 @@ def sample_random_cardIDs(knowledgeGraph, num_cards_to_show=20):
 def get_related_cardIDs_from_subject_list(subject_list_in_knowledgeGraph, knowledgeGraph,
                                          num_cards_to_show=20):
     # Returns the num_cards_to_show most relevant ones, but in reverse order of relevance (most relevant last)
+    
+    if subject_list_in_knowledgeGraph is None or len(subject_list_in_knowledgeGraph) == 0:
+        random_cardIDs = sample_random_cardIDs(knowledgeGraph, num_cards_to_show=num_cards_to_show)
+        return random_cardIDs
     
     # Get embedding vector based on concepts
     question_emb_vec = emb_vec_weighted_union_of_nodes(subject_list_in_knowledgeGraph, knowledgeGraph)
@@ -163,7 +170,7 @@ def wrap_related_card_examples(related_cardIDs, knowledgeGraph, increasing_abstr
     detail_change_text = '' if increasing_abstraction else ' and more detail'
     
     example_question_and_related_questions = ""
-    example_question_and_related_questions += ("Related questions in order of " + increasing_decreasing_text + " abstraction" 
+    example_question_and_related_questions += ("Group of related questions:" 
                                                + detail_change_text + ":\n")
     for _cardID in related_cardIDs:
         example_question_and_related_questions += "Q: " +  '{' + (knowledgeGraph.cards[_cardID].question) + '}\n'

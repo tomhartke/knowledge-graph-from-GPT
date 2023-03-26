@@ -255,6 +255,15 @@ class CardConceptHierarchy:
                 abs_level_samples[concept].append(abs_level)
         abstractions_dict = {k: np.average(np.array(v)) for k, v in abs_level_samples.items()}
         return abstractions_dict
+    
+    def get_abstractions_dict_as_JSON_str(self):
+
+        def list_to_doublequotes(_list):
+            return '["' + '", "'.join(_list) + '"]'
+
+        _list = ['"'+str(abs_level)+'" : '+ list_to_doublequotes(list(concept_dict.keys()))  
+                                       for abs_level, concept_dict in sorted(self.abstraction_groups.items())]
+        return "{" + ', '.join(_list) + "}"
                                                     
 class Card:
     """
@@ -680,7 +689,8 @@ class KnowledgeGraph:
 
             # Initialize embedding vector 
             if len(node.embedding_vector) > 0 and allow_reusing_existing_node_embedding:
-                new_emb_vec = node.embedding_vector.copy() # to be updated
+                new_emb_vec = node.raw_embedding_vector.copy()  # have to copy because we maybe introduced new elements 
+                new_emb_vec.update(node.embedding_vector.copy())  # uses old embedding vector as default values
             else:
                 new_emb_vec = node.raw_embedding_vector.copy()  # to be filled 
             new_emb_vec_current_total = np.sum(list(new_emb_vec.values())) 
