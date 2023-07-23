@@ -1,4 +1,4 @@
-# A knowledge graph from GPT-3
+# A knowledge graph from GPT
  
 ## High-level description
 This program is meant to create an external memory module for a language model, and ultimately provide 
