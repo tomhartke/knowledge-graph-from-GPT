@@ -1,0 +1,10 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+  - family-names: Hartke
+    given-names: Thomas
+    orcid: https://orcid.org/0000-0001-7978-0473
+title: "knowledge-graph-from-GPT"
+version: 1.0.0
+date-released: 2023-12-19
+url: "https://github.com/tomhartke/knowledge-graph-from-GPT"
