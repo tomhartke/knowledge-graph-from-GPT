@@ -1,5 +1,87 @@
 # A knowledge graph from GPT
- 
+
+[![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
+[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+
+## Quick Start
+
+### Installation
+
+1. **Clone the repository**
+```bash
+git clone https://github.com/tomhartke/knowledge-graph-from-GPT.git
+cd knowledge-graph-from-GPT
+```
+
+2. **Create a virtual environment**
+```bash
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+```
+
+3. **Install dependencies**
+```bash
+pip install -r requirements.txt
+```
+
+4. **Set up your OpenAI API key**
+```bash
+# Option 1: Export as environment variable
+export OPENAI_API_KEY='your-api-key-here'
+
+# Option 2: Create a .env file
+cp .env.example .env
+# Then edit .env and add your API key
+```
+
+### Basic Usage
+
+```python
+from knowledge_graph import KnowledgeGraph, Card
+from initial_card_processing import get_cards_df_abstraction_groups_from_front_and_back_csv
+from knowledge_graph_querying import query_knowledge_graph
+
+# Load flashcards from CSV
+cards_df = get_cards_df_abstraction_groups_from_front_and_back_csv('my_flash_cards_general')
+
+# Build knowledge graph
+kg = KnowledgeGraph()
+kg.add_card_deck(cards_df)
+kg.update_all_embeddings()
+
+# Query the graph
+answer = query_knowledge_graph(
+    question="What is a PixelVAE?",
+    knowledge_graph=kg,
+    top_k=5
+)
+print(answer)
+```
+
+### Running Tests
+
+```bash
+# Install development dependencies
+pip install -r requirements-dev.txt
+
+# Run tests
+pytest tests/ -v
+
+# Run with coverage
+pytest tests/ --cov=. --cov-report=html
+```
+
+## Recent Updates
+
+- **Fixed critical bugs**: Corrected exception handling and variable assignments
+- **Modernized OpenAI API**: Updated from deprecated `text-davinci-003` to `gpt-3.5-turbo` ChatCompletion API
+- **Centralized configuration**: New `config.py` module for managing all settings
+- **Improved error handling**: Replaced bare `except` clauses with specific exception types
+- **Added type hints**: Comprehensive type annotations for better IDE support and code clarity
+- **Dependency management**: Added `requirements.txt`, `pyproject.toml`, and `.env` support
+- **Test suite**: Initial test coverage for configuration and utilities
+- **CI/CD ready**: GitHub Actions workflow for automated testing
+
 ## High-level description
 This program is meant to create an external memory module for a language model, and ultimately provide 
 agent-like capabilities to a language model (long-term goal).

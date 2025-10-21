@@ -10,32 +10,84 @@ import scipy
 import time
 from pprint import pprint as pprint
 
+try:
+    from config import config
+except ImportError:
+    # Fallback if config not available
+    config = None
+
 # Load your API key from an environment variable or secret management service
-openai.api_key = os.getenv("OPENAI_API_KEY") 
-model_to_use =  "text-davinci-003"
-    # "gpt-3.5-turbo-0301" is more moderns
-    # "text-curie-001" is 10x cheaper than "text-davinci-003", but not as good
-    # "text-davinci-002" is faster than 3, but not necessarily worse at explaining?
-    
+if config:
+    openai.api_key = config.openai.api_key
+    model_to_use = config.openai.model
+else:
+    openai.api_key = os.getenv("OPENAI_API_KEY")
+    if not openai.api_key:
+        raise ValueError(
+            "OPENAI_API_KEY environment variable is not set.\n"
+            "Please set it: export OPENAI_API_KEY='your-key-here'"
+        )
+    model_to_use = os.getenv("OPENAI_MODEL", "gpt-3.5-turbo")
+
 # Setup interface with language model
 
-def gen_response(prompt='hi', max_tokens=10, temperature=0):
-    response = openai.Completion.create(model=model_to_use, prompt=prompt, temperature=temperature, max_tokens=max_tokens)
+def gen_response(prompt: str = 'hi', max_tokens: int = 10, temperature: float = 0) -> Dict:
+    """Generate response using OpenAI Chat Completion API.
+
+    Args:
+        prompt: The prompt to send to the model
+        max_tokens: Maximum tokens to generate
+        temperature: Sampling temperature (0 = deterministic)
+
+    Returns:
+        OpenAI API response object
+    """
+    response = openai.ChatCompletion.create(
+        model=model_to_use,
+        messages=[{"role": "user", "content": prompt}],
+        temperature=temperature,
+        max_tokens=max_tokens
+    )
     return response
 
-def gen_response_text_with_backoff(prompt='hi', max_tokens=10, temperature=0):
+def gen_response_text_with_backoff(
+    prompt: str = 'hi',
+    max_tokens: int = 10,
+    temperature: float = 0,
+    max_retries: int = 10
+) -> Tuple[str, int]:
+    """Generate response with exponential backoff retry logic.
+
+    Args:
+        prompt: The prompt to send to the model
+        max_tokens: Maximum tokens to generate
+        temperature: Sampling temperature
+        max_retries: Maximum number of retry attempts
+
+    Returns:
+        Tuple of (response_text, tokens_used)
+
+    Raises:
+        Exception: If all retries fail
+    """
     prompt_succeeded = False
     wait_time = 0.1
-    while not prompt_succeeded:
+    retry_count = 0
+
+    while not prompt_succeeded and retry_count < max_retries:
         try:
             response = gen_response(prompt, max_tokens, temperature=temperature)
             prompt_succeeded = True
-        except:
-            print('  LM response failed. Server probably overloaded. Retrying after ', wait_time, ' seconds...')
+        except (openai.error.APIError, openai.error.RateLimitError, openai.error.Timeout, openai.error.ServiceUnavailableError) as e:
+            retry_count += 1
+            print(f'  LM response failed: {e}. Retry {retry_count}/{max_retries}. Retrying after {wait_time} seconds...')
+            if retry_count >= max_retries:
+                raise Exception(f"Failed after {max_retries} retries: {e}")
             time.sleep(wait_time)
-            wait_time += wait_time*2  # exponential backoff 
-    response_text = str(response["choices"][0]["text"])
-    used_tokens = response["usage"]["completion_tokens"]  # ["total_tokens"], i think completion is what matters
+            wait_time += wait_time * 2  # exponential backoff
+
+    response_text = response["choices"][0]["message"]["content"]
+    used_tokens = response["usage"]["completion_tokens"]
     return response_text, used_tokens
 
 def get_dict_items_sorted_by_decreasing_value(_dict):

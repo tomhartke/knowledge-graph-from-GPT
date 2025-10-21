@@ -18,15 +18,36 @@ from knowledge_graph import *
 from knowledge_graph_querying import *
 from initial_card_processing import *
 
-# Load your API key from an environment variable or secret management service
-openai.api_key = os.getenv("OPENAI_API_KEY")
+try:
+    from config import config
+except ImportError:
+    config = None
 
-model_chat_engine = "gpt-3.5-turbo" 
+# Load your API key from an environment variable or secret management service
+if config:
+    openai.api_key = config.openai.api_key
+    model_chat_engine = config.openai.model
+else:
+    openai.api_key = os.getenv("OPENAI_API_KEY")
+    if not openai.api_key:
+        raise ValueError(
+            "OPENAI_API_KEY environment variable is not set.\n"
+            "Please set it: export OPENAI_API_KEY='your-key-here'"
+        )
+    model_chat_engine = os.getenv("OPENAI_MODEL", "gpt-3.5-turbo") 
     
 SYSTEM_MESSAGE = ("You are a helpful professor and polymath scientist. You want to help a fellow researcher learn more about the world. "
                   + "You are clear, concise, and precise in your answers, and you follow instructions carefully.")
     
-def _gen_chat_response(prompt='hi'):
+def _gen_chat_response(prompt: str = 'hi') -> str:
+    """Generate chat response using OpenAI API.
+
+    Args:
+        prompt: The user's prompt
+
+    Returns:
+        The assistant's response text
+    """
     response = openai.ChatCompletion.create(
         model=model_chat_engine,
         messages=[
@@ -37,17 +58,34 @@ def _gen_chat_response(prompt='hi'):
 
     return message['content']
 
-def gen_chat_response(prompt='hi'):
+def gen_chat_response(prompt: str = 'hi', max_retries: int = 10) -> str:
+    """Generate chat response with retry logic.
+
+    Args:
+        prompt: The user's prompt
+        max_retries: Maximum number of retry attempts
+
+    Returns:
+        The assistant's response text
+
+    Raises:
+        Exception: If all retries fail
+    """
     prompt_succeeded = False
     wait_time = 0.1
-    while not prompt_succeeded:
+    retry_count = 0
+
+    while not prompt_succeeded and retry_count < max_retries:
         try:
             response = _gen_chat_response(prompt)
             prompt_succeeded = True
-        except:
-            print('  LM response failed. Server probably overloaded. Retrying after ', wait_time, ' seconds...')
+        except (openai.error.APIError, openai.error.RateLimitError, openai.error.Timeout, openai.error.ServiceUnavailableError) as e:
+            retry_count += 1
+            print(f'  LM response failed: {e}. Retry {retry_count}/{max_retries}. Retrying after {wait_time} seconds...')
+            if retry_count >= max_retries:
+                raise Exception(f"Failed after {max_retries} retries: {e}")
             time.sleep(wait_time)
-            wait_time += wait_time*2  # exponential backoff 
+            wait_time += wait_time * 2  # exponential backoff
     return response
 
 def convert_abstraction_group_to_concept_list(abs_grp):

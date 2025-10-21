@@ -184,9 +184,9 @@ def get_cards_df_meta_data_from_text_descriptions(cards_df_text_descriptions,
                 jsonConversionFailure = True
                 print("   !!!!!!!! JSON conversion failed (not a real list of subjects)", " for card index ", card_ind)
 
-        except:
+        except (json.JSONDecodeError, TypeError, ValueError) as e:
             jsonConversionFailure = True
-            print("   !!!!!!!! JSON conversion failed", " for card index ", card_ind)
+            print(f"   !!!!!!!! JSON conversion failed: {e}", " for card index ", card_ind)
 
 
         flashcardPrompt = ("Reformat the following information into a JSON dictionary containing lists of strings.\n\n" +
@@ -227,9 +227,9 @@ def get_cards_df_meta_data_from_text_descriptions(cards_df_text_descriptions,
                             jsonConversionFailure = True
                             print("   !!!!!!!! JSON conversion failed (abstraction dict doesn't contain a list of strings)", " for card index ", card_ind)
 
-        except:
-            jsonConversionFailure
-            print("   !!!!!!!! JSON conversion failed", " for card index ", card_ind)
+        except (json.JSONDecodeError, TypeError, ValueError) as e:
+            jsonConversionFailure = True
+            print(f"   !!!!!!!! JSON conversion failed: {e}", " for card index ", card_ind)
 
         ##########################
 
